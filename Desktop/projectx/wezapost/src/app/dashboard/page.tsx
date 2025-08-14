@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { SocialAccountsManager } from '@/components/features/social-accounts'
 import { PostCreator } from '@/components/features/post-creator'
+import { CalendarView } from '@/components/features/calendar-view'
+import { SchedulerDashboard } from '@/components/features/scheduler-dashboard'
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
@@ -101,6 +103,12 @@ export default function DashboardPage() {
 
           {/* Post Creator */}
           <PostCreator />
+
+          {/* Calendar View */}
+          <CalendarView />
+
+          {/* Scheduler Dashboard */}
+          <SchedulerDashboard />
 
           {/* Quick Stats */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
