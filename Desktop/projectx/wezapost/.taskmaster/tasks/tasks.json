@@ -1,0 +1,44 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Foundation & Infrastructure",
+        "description": "Phase 1: Foundation & Infrastructure - Duration: 10-12 days, Complexity: Medium (6/10)",
+        "status": "pending",
+        "priority": "critical",
+        "dependencies": [],
+        "details": "This phase focuses on foundation & infrastructure with an estimated duration of 10-12 days and Medium (6/10) complexity.",
+        "testStrategy": "Complete all tasks in this phase and verify functionality.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Project Initialization & Environment Setup",
+            "description": "Initialize Git, Next.js project, configure development environment",
+            "status": "pending",
+            "priority": "critical",
+            "dependencies": [],
+            "details": "Estimated hours: 4, Complexity: Low (3/10)\n\nSubtasks:\n1. Initialize Git repository and GitHub setup\n2. Create Next.js 14+ TypeScript project structure\n3. Set up pnpm/npm workspace configuration\n4. Configure ESLint, Prettier, and TypeScript configs\n5. Create development Docker configuration\n6. Set up environment variable management\n7. Initialize basic folder structure",
+            "testStrategy": "Verify all subtasks are completed and functionality works as expected."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Core Features & Social Media Integration",
+        "description": "Phase 2: Core Features & Social Media Integration - Duration: 12-14 days, Complexity: High (8/10)",
+        "status": "pending",
+        "priority": "critical",
+        "dependencies": [],
+        "details": "This phase focuses on core features & social media integration with an estimated duration of 12-14 days and High (8/10) complexity.",
+        "testStrategy": "Complete all tasks in this phase and verify functionality.",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-14T09:10:17.001Z",
+      "updated": "2025-08-14T09:10:17.004Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

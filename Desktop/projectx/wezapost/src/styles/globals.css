@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Source Code Pro font */
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+
+@layer base {
+  :root {
+    /* Light Theme - OKLCH Colors */
+    --background: oklch(0.9491 0.0085 197.0126);
+    --foreground: oklch(0.3772 0.0619 212.6640);
+    --primary: oklch(0.5624 0.0947 203.2755);
+    --primary-foreground: oklch(0.9724 0.0053 197.0692);
+    --card: oklch(0.9724 0.0053 197.0692);
+    --card-foreground: oklch(0.3772 0.0619 212.6640);
+    --accent: oklch(0.9021 0.0297 201.8915);
+    --accent-foreground: oklch(0.3772 0.0619 212.6640);
+    --muted: oklch(0.9021 0.0297 201.8915);
+    --muted-foreground: oklch(0.5624 0.0947 203.2755);
+    --border: oklch(0.9021 0.0297 201.8915);
+    --input: oklch(0.9021 0.0297 201.8915);
+    --ring: oklch(0.5624 0.0947 203.2755);
+    
+    /* Semantic colors with cyan undertones */
+    --success: oklch(0.7 0.15 145);
+    --warning: oklch(0.8 0.15 85);
+    --error: oklch(0.65 0.15 25);
+    --info: oklch(0.7 0.15 250);
+    
+    /* Shadow colors */
+    --shadow-xs: oklch(0.5624 0.0947 203.2755 / 0.05);
+    --shadow-sm: oklch(0.5624 0.0947 203.2755 / 0.1);
+    --shadow-md: oklch(0.5624 0.0947 203.2755 / 0.15);
+    --shadow-lg: oklch(0.5624 0.0947 203.2755 / 0.2);
+    
+    /* Base radius */
+    --radius: 0.125rem;
+  }
+
+  .dark {
+    /* Dark Theme - OKLCH Colors */
+    --background: oklch(0.2068 0.0247 224.4533);
+    --foreground: oklch(0.8520 0.1269 195.0354);
+    --primary: oklch(0.8520 0.1269 195.0354);
+    --primary-foreground: oklch(0.2068 0.0247 224.4533);
+    --card: oklch(0.2293 0.0276 216.0674);
+    --card-foreground: oklch(0.8520 0.1269 195.0354);
+    --accent: oklch(0.3775 0.0564 216.5010);
+    --accent-foreground: oklch(0.8520 0.1269 195.0354);
+    --muted: oklch(0.3775 0.0564 216.5010);
+    --muted-foreground: oklch(0.6520 0.1069 195.0354);
+    --border: oklch(0.3775 0.0564 216.5010);
+    --input: oklch(0.3775 0.0564 216.5010);
+    --ring: oklch(0.8520 0.1269 195.0354);
+    
+    /* Semantic colors for dark theme */
+    --success: oklch(0.6 0.15 145);
+    --warning: oklch(0.7 0.15 85);
+    --error: oklch(0.6 0.15 25);
+    --info: oklch(0.65 0.15 250);
+    
+    /* Shadow colors for dark theme */
+    --shadow-xs: oklch(0.8520 0.1269 195.0354 / 0.05);
+    --shadow-sm: oklch(0.8520 0.1269 195.0354 / 0.1);
+    --shadow-md: oklch(0.8520 0.1269 195.0354 / 0.15);
+    --shadow-lg: oklch(0.8520 0.1269 195.0354 / 0.2);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-mono;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+  
+  /* Ensure monospace font loads properly */
+  html {
+    font-family: 'Source Code Pro', 'Courier New', monospace;
+  }
+}
+
+@layer utilities {
+  /* Theme transition utilities */
+  .theme-transition {
+    transition: all 300ms ease-in-out;
+  }
+  
+  /* Custom shadow utilities */
+  .shadow-theme-xs {
+    box-shadow: 0 1px 2px 0 var(--shadow-xs);
+  }
+  
+  .shadow-theme-sm {
+    box-shadow: 0 1px 3px 0 var(--shadow-sm), 0 1px 2px -1px var(--shadow-sm);
+  }
+  
+  .shadow-theme-md {
+    box-shadow: 0 4px 6px -1px var(--shadow-md), 0 2px 4px -2px var(--shadow-md);
+  }
+  
+  .shadow-theme-lg {
+    box-shadow: 0 10px 15px -3px var(--shadow-lg), 0 4px 6px -4px var(--shadow-lg);
+  }
+  
+  /* Status indicator utilities */
+  .status-published {
+    @apply text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20;
+  }
+  
+  .status-scheduled {
+    @apply text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20;
+  }
+  
+  .status-failed {
+    @apply text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20;
+  }
+  
+  .status-draft {
+    @apply text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-900/20;
+  }
+}
