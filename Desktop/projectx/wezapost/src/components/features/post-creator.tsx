@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
 import { SocialAccount, SocialProviderManager } from '@/lib/social-providers'
 import { createSupabaseClientComponentClient } from '@/lib/supabase'
+import { format } from 'date-fns'
 
 interface Post {
   id: string
@@ -27,6 +29,11 @@ export function PostCreator() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  
+  // Scheduling states
+  const [scheduleMode, setScheduleMode] = useState<'now' | 'later'>('now')
+  const [scheduledDate, setScheduledDate] = useState('')
+  const [scheduledTime, setScheduledTime] = useState('')
 
   const socialManager = new SocialProviderManager()
   const supabase = createSupabaseClientComponentClient()
@@ -72,23 +79,48 @@ export function PostCreator() {
     )
   }
 
-  const handleCreatePost = async (action: 'draft' | 'publish') => {
+  const handleCreatePost = async (action: 'draft' | 'publish' | 'schedule') => {
     if (!session?.user?.id || !content.trim()) return
+    
+    // Validation for scheduling
+    if (action === 'schedule' && scheduleMode === 'later') {
+      if (!scheduledDate || !scheduledTime) {
+        alert('Please select both date and time for scheduling')
+        return
+      }
+      
+      const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`)
+      if (scheduledDateTime <= new Date()) {
+        alert('Scheduled time must be in the future')
+        return
+      }
+    }
     
     setIsSubmitting(true)
     
     try {
+      let scheduledFor = null
+      let status: 'draft' | 'published' | 'scheduled' = 'draft'
+      
+      if (action === 'schedule' && scheduleMode === 'later') {
+        scheduledFor = new Date(`${scheduledDate}T${scheduledTime}`).toISOString()
+        status = 'scheduled'
+      } else if (action === 'publish') {
+        status = 'published'
+      }
+      
       const postData = {
         user_id: session.user.id,
         content: content.trim(),
         platforms: selectedPlatforms,
-        status: action === 'draft' ? 'draft' as const : 'published' as const,
+        status,
+        scheduled_for: scheduledFor,
         platform_posts: selectedPlatforms.map(platform => ({
           platform,
           post_id: null,
-          status: action === 'draft' ? 'pending' as const : 'published' as const,
+          status: status === 'published' ? 'published' as const : 'pending' as const,
           error_message: null,
-          published_at: action === 'publish' ? new Date().toISOString() : null,
+          published_at: status === 'published' ? new Date().toISOString() : null,
         })),
         ai_generated: false,
       }
@@ -112,11 +144,17 @@ export function PostCreator() {
       // Reset form
       setContent('')
       setSelectedPlatforms([])
+      setScheduledDate('')
+      setScheduledTime('')
+      setScheduleMode('now')
       
       // TODO: If publishing, actually post to social media platforms
       if (action === 'publish') {
         console.log('Publishing to platforms:', selectedPlatforms)
         // This would integrate with actual social media APIs
+      } else if (action === 'schedule') {
+        console.log('Scheduled post for:', scheduledFor)
+        // TODO: Add to Redis queue for scheduled processing
       }
 
     } catch (error) {
@@ -242,6 +280,63 @@ export function PostCreator() {
             )}
           </div>
 
+          {/* Scheduling Options */}
+          <div>
+            <div className="mb-3">
+              <span className="text-sm font-medium font-mono">When to Post:</span>
+            </div>
+            <div className="flex space-x-4 mb-4">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="now"
+                  checked={scheduleMode === 'now'}
+                  onChange={(e) => setScheduleMode(e.target.value as 'now' | 'later')}
+                  className="text-primary focus:ring-primary"
+                />
+                <span className="text-sm font-mono">Post Now</span>
+              </label>
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="later"
+                  checked={scheduleMode === 'later'}
+                  onChange={(e) => setScheduleMode(e.target.value as 'now' | 'later')}
+                  className="text-primary focus:ring-primary"
+                />
+                <span className="text-sm font-mono">Schedule for Later</span>
+              </label>
+            </div>
+            
+            {scheduleMode === 'later' && (
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label className="block text-xs font-medium font-mono mb-1">
+                    Date
+                  </label>
+                  <Input
+                    type="date"
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    min={format(new Date(), 'yyyy-MM-dd')}
+                    className="font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium font-mono mb-1">
+                    Time
+                  </label>
+                  <Input
+                    type="time"
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="flex space-x-2">
             <Button
               onClick={() => handleCreatePost('draft')}
@@ -251,13 +346,24 @@ export function PostCreator() {
             >
               {isSubmitting ? 'Saving...' : 'Save as Draft'}
             </Button>
-            <Button
-              onClick={() => handleCreatePost('publish')}
-              disabled={!content.trim() || selectedPlatforms.length === 0 || isSubmitting}
-              className="flex-1"
-            >
-              {isSubmitting ? 'Publishing...' : 'Publish Now'}
-            </Button>
+            
+            {scheduleMode === 'now' ? (
+              <Button
+                onClick={() => handleCreatePost('publish')}
+                disabled={!content.trim() || selectedPlatforms.length === 0 || isSubmitting}
+                className="flex-1"
+              >
+                {isSubmitting ? 'Publishing...' : 'Publish Now'}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => handleCreatePost('schedule')}
+                disabled={!content.trim() || selectedPlatforms.length === 0 || isSubmitting || !scheduledDate || !scheduledTime}
+                className="flex-1"
+              >
+                {isSubmitting ? 'Scheduling...' : 'Schedule Post'}
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -293,7 +399,10 @@ export function PostCreator() {
                   </div>
                   <div className="flex items-center space-x-2 mt-3">
                     <span className="text-xs text-muted-foreground font-mono">
-                      {new Date(post.created_at).toLocaleDateString()}
+                      {post.status === 'scheduled' && post.scheduled_for
+                        ? `Scheduled: ${format(new Date(post.scheduled_for), 'MMM dd, yyyy HH:mm')}`
+                        : `Created: ${format(new Date(post.created_at), 'MMM dd, yyyy')}`
+                      }
                     </span>
                     <span className="text-xs text-muted-foreground">•</span>
                     <div className="flex space-x-1">
