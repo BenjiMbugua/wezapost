@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Instagram Real Posting</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result { 
+            margin: 15px 0; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; border: 1px solid #22c55e; }
+        .info { background: #dbeafe; border: 1px solid #3b82f6; }
+        .error { background: #fef2f2; border: 1px solid #ef4444; }
+        .warning { background: #fef3c7; border: 1px solid #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Instagram Real Posting</h1>
+        <p>Testing if Instagram posts are actually being sent to the real account or just simulated.</p>
+        
+        <h3>Tests:</h3>
+        <button onclick="checkInstagramAccount()">1. Check Instagram Account</button>
+        <button onclick="validateInstagramBusiness()">2. Validate Business Account</button>
+        <button onclick="testRealPost()">3. Test Real Post</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function showResult(message, type) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            resultsDiv.innerHTML += `<div class="result ${type}">[${timestamp}] ${message}</div>`;
+        }
+
+        async function checkInstagramAccount() {
+            showResult('Checking Instagram account connection...', 'info');
+            
+            try {
+                const response = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test_connection' })
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.accounts) {
+                    const instagramAccounts = result.accounts.filter(acc => acc.platform === 'instagram');
+                    
+                    if (instagramAccounts.length > 0) {
+                        const account = instagramAccounts[0];
+                        showResult(`✅ Instagram Account Found:
+- Username: @${account.username}
+- Display Name: ${account.display_name}
+- Has Access Token: ${!!account.access_token}
+- Facebook Page ID: ${account.facebook_page_id || 'Not set'}
+- Platform User ID: ${account.platform_user_id || 'Not set'}
+- Account Active: ${account.is_active}
+
+Real Account Indicators:
+- Has access_token: ${!!account.access_token}
+- ID contains 'real': ${account.id.includes('real')}
+- Real OAuth flag: ${account.real_oauth}`, 'success');
+                        
+                        // Store account for next tests
+                        window.instagramAccount = account;
+                    } else {
+                        showResult('❌ No Instagram accounts found', 'error');
+                    }
+                } else {
+                    showResult(`❌ Failed to get accounts: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function validateInstagramBusiness() {
+            if (!window.instagramAccount) {
+                showResult('❌ Run step 1 first to get Instagram account', 'error');
+                return;
+            }
+
+            showResult('Validating Instagram business account permissions...', 'info');
+            
+            try {
+                const response = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'validate',
+                        account: window.instagramAccount
+                    })
+                });
+
+                const result = await response.json();
+                
+                const status = result.success ? '✅ VALID' : '❌ INVALID';
+                showResult(`${status} Business Account Validation:
+
+Success: ${result.success}
+Has Permissions: ${result.hasPermissions}
+Business Account: ${result.businessAccount ? `@${result.businessAccount.username} (${result.businessAccount.id})` : 'Not found'}
+Error: ${result.error || 'None'}
+
+This determines if posts will be REAL or SIMULATED:
+- If validation succeeds: Posts will be REAL
+- If validation fails: Posts will be SIMULATED
+
+Debug Info:
+${JSON.stringify(result.debug || {}, null, 2)}`, result.success ? 'success' : 'warning');
+
+            } catch (error) {
+                showResult(`❌ Validation error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testRealPost() {
+            if (!window.instagramAccount) {
+                showResult('❌ Run step 1 first to get Instagram account', 'error');
+                return;
+            }
+
+            showResult('Testing actual Instagram posting...', 'info');
+            
+            try {
+                const response = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'post',
+                        account: window.instagramAccount,
+                        content: `🚨 REAL TEST POST - ${new Date().toISOString()}
+
+This is a test to verify real Instagram posting vs simulation.
+
+If you see this on your actual Instagram account, then REAL posting is working! ✅
+
+If this doesn't appear on Instagram but shows as "success", then it's being SIMULATED. ❌
+
+#testpost #wezapost #realposting`,
+                        mediaUrls: ['https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=1000&h=1000&fit=crop&crop=entropy&auto=format&fm=jpg&q=80']
+                    })
+                });
+
+                const result = await response.json();
+                
+                const realOrSim = result.simulated ? 'SIMULATED' : 'REAL';
+                const icon = result.success ? (result.simulated ? '⚠️' : '✅') : '❌';
+                
+                showResult(`${icon} ${realOrSim} POST RESULT:
+
+Success: ${result.success}
+SIMULATED: ${result.simulated}
+Post ID: ${result.postId || 'N/A'}
+Published At: ${result.publishedAt || 'N/A'}
+URL: ${result.url || 'N/A'}
+Note: ${result.note || 'N/A'}
+Error: ${result.error || 'None'}
+
+IMPORTANT:
+${result.simulated ? '⚠️ This was SIMULATED - check business account validation above' : '✅ This was REAL - check your Instagram account for the post!'}
+
+Full Response:
+${JSON.stringify(result, null, 2)}`, result.simulated ? 'warning' : (result.success ? 'success' : 'error'));
+
+            } catch (error) {
+                showResult(`❌ Test error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-start first test
+        window.onload = () => {
+            setTimeout(checkInstagramAccount, 1000);
+        };
+    </script>
+</body>
+</html>

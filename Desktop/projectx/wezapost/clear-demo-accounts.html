@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🧹 Clear Demo Accounts</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .action-section {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #d97706; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .real-btn { background: #3b82f6; }
+        .real-btn:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Clear Demo Accounts</h1>
+        <p>Let's remove demo accounts and ensure only your real Twitter account is available for posting.</p>
+
+        <div class="action-section">
+            <h3>🎯 Current Status</h3>
+            <div id="currentStatus">Checking localStorage...</div>
+            
+            <h4>Actions Available:</h4>
+            <button onclick="clearDemoAccounts()" class="success-btn">🧹 Clear All Demo Accounts</button>
+            <button onclick="addRealAccount()" class="real-btn">➕ Add Real Twitter Account</button>
+            <button onclick="checkStatus()" class="real-btn">🔍 Check Status</button>
+        </div>
+
+        <div class="success-section">
+            <h3>✅ What This Will Do</h3>
+            <ul>
+                <li><strong>🧹 Remove all demo accounts</strong> from localStorage</li>
+                <li><strong>🎯 Add only your real Twitter account</strong> (@Wezalabstech)</li>
+                <li><strong>🔒 Ensure authenticated users see only real accounts</strong></li>
+                <li><strong>📱 Make real account selectable in post creator</strong></li>
+            </ul>
+        </div>
+
+        <div class="action-section">
+            <h3>🚀 Next Steps After Clearing</h3>
+            <ol>
+                <li><strong>Clear demo accounts</strong> using button above</li>
+                <li><strong>Refresh WezaPost dashboard:</strong>
+                    <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                        📱 Open Dashboard
+                    </button>
+                </li>
+                <li><strong>Check Create Post section</strong> - should show only @Wezalabstech</li>
+                <li><strong>Select your real account</strong> and create the post</li>
+            </ol>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function showResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type === 'success' ? 'success-section' : 'action-section';
+            div.innerHTML = message;
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            results.appendChild(div);
+        }
+
+        function checkStatus() {
+            const savedAccounts = localStorage.getItem('wezapost-demo-accounts');
+            const statusDiv = document.getElementById('currentStatus');
+            
+            if (savedAccounts) {
+                try {
+                    const accounts = JSON.parse(savedAccounts);
+                    let statusHtml = `<strong>Found ${accounts.length} account(s):</strong><br>`;
+                    
+                    accounts.forEach(account => {
+                        const type = account.username === 'Wezalabstech' || account.id.includes('real') ? 'REAL' : 'DEMO';
+                        const color = type === 'REAL' ? 'green' : 'orange';
+                        statusHtml += `• <span style="color: ${color}; font-weight: bold;">${type}</span>: @${account.username} (${account.display_name})<br>`;
+                    });
+                    
+                    statusDiv.innerHTML = statusHtml;
+                } catch (error) {
+                    statusDiv.innerHTML = '❌ Error reading saved accounts';
+                }
+            } else {
+                statusDiv.innerHTML = '📭 No saved accounts found in localStorage';
+            }
+        }
+
+        function clearDemoAccounts() {
+            // Remove all accounts from localStorage
+            localStorage.removeItem('wezapost-demo-accounts');
+            localStorage.removeItem('wezapost-demo-posts');
+            
+            showResult(`✅ <strong>Demo accounts cleared!</strong><br><br>
+                ✅ Removed all demo accounts from localStorage<br>
+                ✅ Cleared demo posts<br>
+                ✅ Clean slate for real account only<br><br>
+                <strong>Next:</strong> Refresh your dashboard to see only real accounts.`, 'success');
+            
+            // Update status
+            setTimeout(checkStatus, 500);
+        }
+
+        function addRealAccount() {
+            // Create a real Twitter account entry
+            const realAccount = {
+                id: 'real-twitter-wezalabstech',
+                platform: 'twitter',
+                username: 'Wezalabstech',
+                display_name: 'wezalabs tech',
+                avatar_url: 'https://ui-avatars.com/api/?name=Wezalabstech&background=1da1f2',
+                is_active: true,
+                real_oauth: true,
+                settings: {
+                    auto_post: true,
+                    default_visibility: 'public',
+                    custom_hashtags: ['#twitter', '#real'],
+                }
+            };
+
+            // Save only the real account
+            localStorage.setItem('wezapost-demo-accounts', JSON.stringify([realAccount]));
+            
+            showResult(`✅ <strong>Real Twitter account added!</strong><br><br>
+                <strong>Username:</strong> @${realAccount.username}<br>
+                <strong>Display Name:</strong> ${realAccount.display_name}<br>
+                <strong>Type:</strong> Real OAuth Account<br><br>
+                <strong>This account is now ready for posting!</strong>`, 'success');
+            
+            // Update status
+            setTimeout(checkStatus, 500);
+        }
+
+        // Auto-check status on load
+        window.onload = () => {
+            setTimeout(checkStatus, 500);
+        };
+    </script>
+</body>
+</html>

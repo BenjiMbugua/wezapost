@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔧 Fix Google OAuth Redirect URI</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #fef2f2; 
+            color: #991b1b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fca5a5;
+        }
+        .error-banner {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .solution {
+            background: #f0f9ff;
+            border: 1px solid #7dd3fc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .solution h3 {
+            color: #0369a1;
+            margin-top: 0;
+        }
+        .copy-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover { background: #2563eb; }
+        .step {
+            background: #f8fafc;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #0369a1;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #b91c1c; }
+        .success-btn {
+            background: #059669;
+        }
+        .success-btn:hover {
+            background: #047857;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix OAuth Redirect URI Error</h1>
+        
+        <div class="error-banner">
+            <h3>❌ Error: redirect_uri_mismatch</h3>
+            <p><strong>Problem:</strong> Your Google OAuth app is configured for port 3000, but WezaPost is running on port 3001.</p>
+        </div>
+
+        <div class="solution">
+            <h3>✅ Quick Fix (2 minutes)</h3>
+            <p>We need to update your Google Cloud Console settings to use the correct port.</p>
+            
+            <div class="step">
+                <h4>Step 1: Open Google Cloud Console</h4>
+                <p>Go to your OAuth credentials page:</p>
+                <button onclick="window.open('https://console.cloud.google.com/apis/credentials', '_blank')">
+                    🔗 Open Google Cloud Console
+                </button>
+            </div>
+
+            <div class="step">
+                <h4>Step 2: Edit Your OAuth Client</h4>
+                <p>1. Find your OAuth 2.0 Client ID (should be named "WezaPost OAuth" or similar)</p>
+                <p>2. Click the <strong>pencil/edit icon</strong> to edit it</p>
+            </div>
+
+            <div class="step">
+                <h4>Step 3: Update Redirect URI</h4>
+                <p>1. In the "Authorized redirect URIs" section</p>
+                <p>2. <strong>Replace</strong> the old URI with this new one:</p>
+                
+                <div class="copy-box">
+http://localhost:3001/api/auth/callback/google
+                    <button class="copy-btn" onclick="copyToClipboard('http://localhost:3001/api/auth/callback/google')">Copy</button>
+                </div>
+                
+                <p>3. <strong>Delete</strong> any old URIs with port 3000</p>
+                <p>4. Click <strong>"Save"</strong></p>
+            </div>
+
+            <div class="step">
+                <h4>Step 4: Test Again</h4>
+                <p>1. Wait 1-2 minutes for Google to update</p>
+                <p>2. Try signing in again:</p>
+                <button class="success-btn" onclick="window.open('http://localhost:3001/auth/signin', '_blank')">
+                    🚀 Test Google Login
+                </button>
+            </div>
+        </div>
+
+        <div class="solution">
+            <h3>🔍 Current Settings Summary</h3>
+            <p><strong>Your WezaPost server:</strong> http://localhost:3001</p>
+            <p><strong>Required redirect URI:</strong> http://localhost:3001/api/auth/callback/google</p>
+            <p><strong>Google Client ID:</strong> 213853535192-l1bn1s3g1155r9nbiv9rh5irajh26at5.apps.googleusercontent.com</p>
+        </div>
+
+        <div class="solution">
+            <h3>🆘 Alternative: Create New OAuth Client</h3>
+            <p>If editing doesn't work, you can create a fresh OAuth client:</p>
+            <ol>
+                <li>Go to Google Cloud Console → Credentials</li>
+                <li>Click "Create Credentials" → "OAuth 2.0 Client IDs"</li>
+                <li>Application type: Web application</li>
+                <li>Name: WezaPost OAuth v2</li>
+                <li>Authorized redirect URIs: <code>http://localhost:3001/api/auth/callback/google</code></li>
+                <li>Copy the new Client ID and Secret to your .env.local file</li>
+            </ol>
+        </div>
+
+        <div id="status" style="margin-top: 20px; padding: 15px; border-radius: 6px; display: none;"></div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = 'Copy';
+                }, 2000);
+                
+                showStatus('✅ Copied to clipboard! Paste this in Google Cloud Console.', 'success');
+            });
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.textContent = message;
+            status.style.background = type === 'success' ? '#dcfce7' : '#fee2e2';
+            status.style.color = type === 'success' ? '#166534' : '#991b1b';
+            status.style.border = type === 'success' ? '1px solid #bbf7d0' : '1px solid #fca5a5';
+        }
+
+        // Show helpful tip
+        setTimeout(() => {
+            showStatus('💡 Tip: The port mismatch is the most common OAuth error. This should fix it!', 'success');
+        }, 1000);
+    </script>
+</body>
+</html>

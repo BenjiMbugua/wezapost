@@ -29,34 +29,52 @@ export function CalendarView() {
   const socialManager = new SocialProviderManager()
 
   useEffect(() => {
-    if (session?.user?.id) {
-      loadScheduledPosts()
-    }
-  }, [session?.user?.id, currentDate])
+    loadScheduledPosts()
+  }, [currentDate])
 
   const loadScheduledPosts = async () => {
-    if (!session?.user?.id) return
-
     try {
       setLoading(true)
-      const monthStart = startOfMonth(currentDate)
-      const monthEnd = endOfMonth(currentDate)
-
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .in('status', ['scheduled', 'published', 'failed'])
-        .gte('scheduled_for', monthStart.toISOString())
-        .lte('scheduled_for', monthEnd.toISOString())
-        .order('scheduled_for', { ascending: true })
-
-      if (error) {
-        console.error('Error loading scheduled posts:', error)
-        return
+      
+      // Load posts from localStorage for demo
+      const savedPosts = localStorage.getItem('wezapost-demo-posts')
+      if (savedPosts) {
+        const posts = JSON.parse(savedPosts)
+        const monthStart = startOfMonth(currentDate)
+        const monthEnd = endOfMonth(currentDate)
+        
+        const filteredPosts = posts.filter((post: any) => {
+          if (!post.scheduled_for) return false
+          const postDate = new Date(post.scheduled_for)
+          return postDate >= monthStart && postDate <= monthEnd && 
+                 ['scheduled', 'published', 'failed'].includes(post.status)
+        })
+        
+        setScheduledPosts(filteredPosts)
       }
 
-      setScheduledPosts(data || [])
+      // If user is authenticated, try to load from database
+      if (session?.user?.id) {
+        try {
+          const monthStart = startOfMonth(currentDate)
+          const monthEnd = endOfMonth(currentDate)
+
+          const { data, error } = await supabase
+            .from('posts')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .in('status', ['scheduled', 'published', 'failed'])
+            .gte('scheduled_for', monthStart.toISOString())
+            .lte('scheduled_for', monthEnd.toISOString())
+            .order('scheduled_for', { ascending: true })
+
+          if (!error && data) {
+            setScheduledPosts(data)
+          }
+        } catch (error) {
+          console.log('Database not available, using demo mode')
+        }
+      }
     } catch (error) {
       console.error('Failed to load scheduled posts:', error)
     } finally {

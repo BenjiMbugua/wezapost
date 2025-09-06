@@ -59,11 +59,32 @@ export default function SignInPage() {
           )}
           
           <div className="space-y-3">
+            <div className="p-3 text-sm text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20 rounded-md">
+              💡 Demo Mode: OAuth providers use placeholder credentials. For full functionality, configure real OAuth credentials in .env.local
+            </div>
+            
+            <Button 
+              onClick={() => router.push('/dashboard')}
+              className="w-full"
+              variant="default"
+            >
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span>Enter Demo Mode</span>
+              </div>
+            </Button>
+            
+            <div className="text-center text-xs text-muted-foreground">
+              or try OAuth providers (requires valid credentials)
+            </div>
+            
             <Button 
               onClick={() => handleProviderSignIn('google')}
               disabled={!!isLoading}
               className="w-full"
-              variant="default"
+              variant="outline"
             >
               {isLoading === 'google' ? (
                 <div className="flex items-center space-x-2">

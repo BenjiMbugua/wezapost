@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐦 Create "The Age of Resolve" Post</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .post-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .content-section {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #1da1f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1991db; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .post-preview {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .post-preview:hover {
+            border-color: #3b82f6;
+            background: #f1f5f9;
+        }
+        .tweet-text {
+            font-size: 15px;
+            line-height: 1.4;
+            color: #0f1419;
+        }
+        .char-count {
+            font-size: 12px;
+            color: #536471;
+            margin-top: 8px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .status.success { background: #dcfce7; color: #16a34a; }
+        .recommended {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐦 Create "The Age of Resolve" Post</h1>
+        <p>Let's create and post your Twitter content: <strong>"the age of resolve"</strong></p>
+
+        <div class="content-section">
+            <h3>✍️ Your Post Content Options</h3>
+            
+            <div class="recommended">
+                <strong>🎯 RECOMMENDED:</strong> Enhanced version with emoji and hashtags
+            </div>
+            
+            <div class="post-preview" onclick="copyToClipboard('💭 the age of resolve\n\n#philosophy #motivation #wisdom')">
+                <div class="tweet-text">💭 the age of resolve<br><br>#philosophy #motivation #wisdom</div>
+                <div class="char-count">54/280 characters • RECOMMENDED</div>
+                <div style="font-size: 11px; color: #22c55e; margin-top: 5px;">
+                    ✅ Click to copy • Perfect length with engagement hashtags
+                </div>
+            </div>
+
+            <h4>Other Versions:</h4>
+            
+            <div class="post-preview" onclick="copyToClipboard('the age of resolve')">
+                <div class="tweet-text">the age of resolve</div>
+                <div class="char-count">18/280 characters • Original</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('🕰️ the age of resolve')">
+                <div class="tweet-text">🕰️ the age of resolve</div>
+                <div class="char-count">21/280 characters • With time emoji</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('the age of resolve ⚡')">
+                <div class="tweet-text">the age of resolve ⚡</div>
+                <div class="char-count">21/280 characters • With energy</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('the age of resolve\n\n#2024goals #mindset')">
+                <div class="tweet-text">the age of resolve<br><br>#2024goals #mindset</div>
+                <div class="char-count">38/280 characters • Goal-focused</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('✨ the age of resolve ✨\n\nWhat\'s your next move? 🤔')">
+                <div class="tweet-text">✨ the age of resolve ✨<br><br>What's your next move? 🤔</div>
+                <div class="char-count">49/280 characters • Engagement question</div>
+            </div>
+        </div>
+
+        <div class="post-section">
+            <h3>🚀 Create Your Post Now</h3>
+            
+            <h4>Step 1: Open WezaPost Dashboard</h4>
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                📱 Open Dashboard
+            </button>
+            
+            <h4>Step 2: Quick Creation Process</h4>
+            <ol>
+                <li><strong>Connect Twitter:</strong> Click "Connect" next to Twitter (your OAuth is already set up!)</li>
+                <li><strong>Go to Create Post:</strong> Find the post creation section</li>
+                <li><strong>Add Content:</strong> Click any version above to copy, then paste</li>
+                <li><strong>Select Twitter:</strong> Make sure Twitter is selected as your platform</li>
+                <li><strong>Post Now:</strong> Click "Publish Now" for immediate posting</li>
+            </ol>
+
+            <h4>🎯 Recommended Settings:</h4>
+            <ul>
+                <li><strong>Content:</strong> The recommended version with emoji and hashtags</li>
+                <li><strong>Timing:</strong> Post immediately (good for motivation content)</li>
+                <li><strong>Platform:</strong> Twitter only</li>
+            </ul>
+        </div>
+
+        <div class="status success">
+            ✅ <strong>Your Twitter OAuth is configured!</strong><br>
+            Ready to post to your actual Twitter account. This will create a real tweet visible to your followers.
+        </div>
+
+        <div style="background: #fef3c7; padding: 20px; border-radius: 8px; border: 1px solid #f59e0b; margin-top: 20px;">
+            <h3>⚠️ Final Check</h3>
+            <ul>
+                <li>🐦 This will post to your REAL Twitter account</li>
+                <li>👥 The tweet will be visible to all your followers</li>
+                <li>📱 Make sure you're happy with the content before posting</li>
+                <li>🔄 You can delete the tweet from Twitter later if needed</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h3>🎉 After Posting</h3>
+            <p>Once you post, you should see:</p>
+            <ul>
+                <li>✅ Post appears in your WezaPost "Recent Posts" section</li>
+                <li>🐦 Tweet appears on your actual Twitter timeline</li>
+                <li>📊 Status shows as "published" in the dashboard</li>
+                <li>🔗 You can view the live tweet link</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                event.target.closest('.post-preview').style.backgroundColor = '#dcfce7';
+                event.target.closest('.post-preview').style.borderColor = '#22c55e';
+                
+                setTimeout(() => {
+                    event.target.closest('.post-preview').style.backgroundColor = '#f8fafc';
+                    event.target.closest('.post-preview').style.borderColor = '#e2e8f0';
+                }, 1000);
+                
+                // Show temporary success message
+                const temp = document.createElement('div');
+                temp.textContent = '✅ Copied to clipboard!';
+                temp.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 6px; z-index: 1000; font-family: monospace;';
+                document.body.appendChild(temp);
+                
+                setTimeout(() => document.body.removeChild(temp), 2000);
+            });
+        }
+
+        // Show current time
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            document.title = `🐦 Create Post (${timeStr})`;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>

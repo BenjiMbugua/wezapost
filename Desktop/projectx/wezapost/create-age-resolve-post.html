@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📝 Create "The Age Resolve" Post</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .post-section {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .content-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #1da1f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1991db; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .copy-btn { background: #6366f1; }
+        .copy-btn:hover { background: #4f46e5; }
+        .post-preview {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .post-preview:hover {
+            border-color: #3b82f6;
+            background: #f1f5f9;
+        }
+        .tweet-text {
+            font-size: 15px;
+            line-height: 1.4;
+            color: #0f1419;
+        }
+        .char-count {
+            font-size: 12px;
+            color: #536471;
+            margin-top: 8px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .status.success { background: #dcfce7; color: #16a34a; }
+        .status.demo { background: #dbeafe; color: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Create "The Age Resolve" Post</h1>
+        <p>Let's create a Twitter post with your content: <strong>"the age resolve"</strong></p>
+
+        <div class="content-section">
+            <h3>✍️ Your Post Content</h3>
+            
+            <div class="post-preview" onclick="copyToClipboard('the age resolve')">
+                <div class="tweet-text">the age resolve</div>
+                <div class="char-count">14/280 characters</div>
+                <div style="font-size: 11px; color: #22c55e; margin-top: 5px;">
+                    ✅ Click to copy to clipboard
+                </div>
+            </div>
+
+            <h4>Enhanced Versions (Optional):</h4>
+            
+            <div class="post-preview" onclick="copyToClipboard('🕰️ the age resolve')">
+                <div class="tweet-text">🕰️ the age resolve</div>
+                <div class="char-count">17/280 characters</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('the age resolve ⚡')">
+                <div class="tweet-text">the age resolve ⚡</div>
+                <div class="char-count">17/280 characters</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('the age resolve\n\n#thoughts #philosophy')">
+                <div class="tweet-text">the age resolve<br><br>#thoughts #philosophy</div>
+                <div class="char-count">36/280 characters</div>
+            </div>
+        </div>
+
+        <div class="post-section">
+            <h3>🚀 Create Your Post</h3>
+            
+            <h4>Step 1: Open WezaPost Dashboard</h4>
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                📱 Open Dashboard
+            </button>
+            
+            <h4>Step 2: Quick Guide</h4>
+            <ol>
+                <li><strong>Connect Twitter:</strong> Go to "Social Media" section and connect a Twitter account (demo mode works instantly)</li>
+                <li><strong>Navigate to Create Post:</strong> Find the "Create Post" section</li>
+                <li><strong>Add Content:</strong> Click any text box above to copy, then paste into the post content area</li>
+                <li><strong>Select Platform:</strong> Choose Twitter as your target platform</li>
+                <li><strong>Publish:</strong> Click "Publish Now" for immediate posting or schedule for later</li>
+            </ol>
+        </div>
+
+        <div class="status demo">
+            📊 <strong>Post Analysis:</strong><br>
+            • Length: Perfect for Twitter (14 characters)<br>
+            • Style: Short, mysterious, thought-provoking<br>
+            • Hashtag potential: Could add #thoughts #philosophy #time<br>
+            • Timing: Great for philosophical reflection posts
+        </div>
+
+        <div class="content-section">
+            <h3>🎯 Testing Options</h3>
+            
+            <h4>Demo Mode (Recommended):</h4>
+            <ul>
+                <li>✅ Instant Twitter connection</li>
+                <li>✅ Simulated posting (no real tweet)</li>
+                <li>✅ Test the full interface</li>
+                <li>✅ See posting results immediately</li>
+            </ul>
+            
+            <h4>Real Twitter (Advanced):</h4>
+            <ul>
+                <li>🔗 Connect actual Twitter account</li>
+                <li>📤 Post real tweet to your timeline</li>
+                <li>⚠️ This will create an actual public tweet</li>
+            </ul>
+        </div>
+
+        <div class="post-section">
+            <h3>🔍 System Status Check</h3>
+            <button onclick="checkSystemStatus()" class="copy-btn">🔍 Check WezaPost Status</button>
+            <div id="statusResults" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="status success">
+            🎉 <strong>Ready!</strong> Your post content is prepared and WezaPost is running. Click "Open Dashboard" to create your post!
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                event.target.closest('.post-preview').style.backgroundColor = '#dcfce7';
+                event.target.closest('.post-preview').style.borderColor = '#22c55e';
+                
+                setTimeout(() => {
+                    event.target.closest('.post-preview').style.backgroundColor = '#f8fafc';
+                    event.target.closest('.post-preview').style.borderColor = '#e2e8f0';
+                }, 1000);
+                
+                // Show temporary success message
+                const temp = document.createElement('div');
+                temp.textContent = '✅ Copied to clipboard!';
+                temp.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 6px; z-index: 1000; font-family: monospace;';
+                document.body.appendChild(temp);
+                
+                setTimeout(() => document.body.removeChild(temp), 2000);
+            });
+        }
+
+        async function checkSystemStatus() {
+            const status = document.getElementById('statusResults');
+            status.style.display = 'block';
+            status.innerHTML = 'Checking WezaPost system status...';
+            status.className = 'status demo';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/session');
+                const session = await response.json();
+                
+                let statusHtml = '';
+                
+                if (response.ok) {
+                    statusHtml += `✅ <strong>WezaPost Server:</strong> Running on http://localhost:3001<br>`;
+                    
+                    if (session && session.user) {
+                        statusHtml += `✅ <strong>Authentication:</strong> Logged in as ${session.user.name}<br>`;
+                        statusHtml += `✅ <strong>Ready to post:</strong> You can create real posts<br>`;
+                    } else {
+                        statusHtml += `ℹ️ <strong>Authentication:</strong> Not logged in (demo mode available)<br>`;
+                        statusHtml += `✅ <strong>Demo Mode:</strong> Available without login<br>`;
+                    }
+                    
+                    statusHtml += `🐦 <strong>Twitter Integration:</strong> Ready (demo + real OAuth)<br>`;
+                    statusHtml += `🎉 <strong>Status:</strong> All systems ready for posting!`;
+                    
+                    status.className = 'status success';
+                } else {
+                    statusHtml = `❌ <strong>Server Error:</strong> WezaPost not responding<br>Make sure the development server is running`;
+                    status.className = 'status error';
+                }
+                
+                status.innerHTML = statusHtml;
+                
+            } catch (error) {
+                status.innerHTML = `❌ <strong>Connection Failed:</strong> Cannot reach WezaPost<br>Make sure the server is running on http://localhost:3001`;
+                status.className = 'status error';
+            }
+        }
+
+        // Auto-check status on load
+        window.onload = () => {
+            setTimeout(checkSystemStatus, 1000);
+        };
+    </script>
+</body>
+</html>

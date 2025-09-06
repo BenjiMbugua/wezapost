@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test User ID Fix</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result { 
+            margin: 15px 0; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; border: 1px solid #22c55e; }
+        .info { background: #dbeafe; border: 1px solid #3b82f6; }
+        .error { background: #fef2f2; border: 1px solid #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test User ID Fix</h1>
+        <p>This page tests whether the user ID is now a proper UUID from Supabase instead of the Google OAuth ID.</p>
+        
+        <h3>Tests:</h3>
+        <button onclick="testCurrentSession()">1. Check Current Session</button>
+        <button onclick="testSupabaseConnection()">2. Test Supabase Connection</button>
+        <button onclick="testFacebookAPI()">3. Test Facebook API</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function showResult(message, type) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            resultsDiv.innerHTML += `<div class="result ${type}">[${timestamp}] ${message}</div>`;
+        }
+
+        async function testCurrentSession() {
+            showResult('Testing current session and user ID format...', 'info');
+            
+            try {
+                const response = await fetch('/api/debug-user-id');
+                const result = await response.json();
+                
+                showResult(`Current Session Data:
+User ID: ${result.session_user_id}
+User ID Type: ${result.session_user_id_type}
+User ID Length: ${result.session_user_id_length}
+Email: ${result.session_user?.email}
+Name: ${result.session_user?.name}
+
+Analysis:
+- If length is 36 and contains hyphens: UUID ✅
+- If length is ~21 digits only: Google OAuth ID (needs fix) ❌
+
+Full User Object:
+${JSON.stringify(result.session_user, null, 2)}`, result.session_user_id?.length === 36 ? 'success' : 'error');
+                
+            } catch (error) {
+                showResult(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSupabaseConnection() {
+            showResult('Testing if user profile exists in Supabase...', 'info');
+            
+            try {
+                const sessionResponse = await fetch('/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                if (!session?.user) {
+                    showResult('Not authenticated - please login first', 'error');
+                    return;
+                }
+
+                showResult(`Session User ID: ${session.user.id}
+Testing if this ID works with Supabase...`, 'info');
+
+                const testResponse = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_database' })
+                });
+
+                const result = await testResponse.json();
+                
+                if (result.success) {
+                    showResult(`✅ SUCCESS: Supabase connection working!
+User ID "${session.user.id}" is valid UUID format.
+Found ${result.accounts?.length || 0} accounts in database.`, 'success');
+                } else {
+                    showResult(`❌ FAILED: ${result.error}
+This usually means the user ID is still not in UUID format.`, 'error');
+                }
+                
+            } catch (error) {
+                showResult(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFacebookAPI() {
+            showResult('Testing Facebook API with new user ID...', 'info');
+            
+            try {
+                const response = await fetch('/api/facebook/post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: 'Test post to verify UUID fix'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(`✅ Facebook API Success:
+Simulated: ${result.simulated}
+Post ID: ${result.post.id}
+Note: ${result.note}
+Debug Info: ${JSON.stringify(result.debug_info, null, 2)}`, result.simulated ? 'info' : 'success');
+                } else {
+                    showResult(`❌ Facebook API Error: ${result.error}
+Details: ${JSON.stringify(result.details, null, 2)}`, 'error');
+                }
+                
+            } catch (error) {
+                showResult(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            setTimeout(testCurrentSession, 1000);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test All Real Posting - No More Simulation</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: #f8fafc;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .platform-test { 
+            border: 1px solid #e2e8f0; 
+            padding: 25px; 
+            margin: 20px 0; 
+            border-radius: 10px; 
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .platform-test h3 { 
+            color: #1e293b; 
+            margin-top: 0; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-working { background: #22c55e; }
+        .status-fixed { background: #3b82f6; }
+        .status-error { background: #ef4444; }
+        
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        button:disabled { 
+            background: #94a3b8; 
+            cursor: not-allowed; 
+        }
+        .test-btn { background: #059669; }
+        .test-btn:hover { background: #047857; }
+        .danger { background: #dc2626; }
+        .danger:hover { background: #b91c1c; }
+        
+        .result { 
+            margin: 15px 0; 
+            padding: 12px; 
+            border-radius: 6px; 
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; border-left: 4px solid #22c55e; color: #15803d; }
+        .error { background: #fef2f2; border-left: 4px solid #ef4444; color: #dc2626; }
+        .info { background: #dbeafe; border-left: 4px solid #3b82f6; color: #1e40af; }
+        .warning { background: #fef3c7; border-left: 4px solid #f59e0b; color: #92400e; }
+        
+        .summary {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        .fix-summary {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 Real Posting Test - All Platforms</h1>
+        <p>Test that Facebook and Instagram now use REAL API calls instead of simulation</p>
+    </div>
+
+    <div class="summary fix-summary">
+        <h3>✅ Fixes Applied:</h3>
+        <ul>
+            <li><strong>Main Issue Fixed:</strong> <code>handleCreatePost</code> now calls <code>publishPostDirect()</code> instead of <code>simulatePublishing()</code></li>
+            <li><strong>Facebook Support Added:</strong> Real Facebook API endpoint <code>/api/facebook/post</code></li>
+            <li><strong>Instagram Enhanced:</strong> Already had real API support via <code>/api/test-instagram-posting</code></li>
+            <li><strong>Twitter Working:</strong> Already had real API support via <code>/api/twitter/post</code></li>
+        </ul>
+    </div>
+
+    <div class="platform-test">
+        <h3>
+            <span class="status-indicator status-working"></span>
+            🐦 Twitter / X - Already Working
+        </h3>
+        <p><strong>Status:</strong> ✅ Was already using real API posting</p>
+        <p><strong>API Endpoint:</strong> <code>/api/twitter/post</code></p>
+        <p><strong>Last Test Result:</strong> Successfully posted with ID <code>1960812529053261983</code></p>
+        <button onclick="testTwitterPosting()" class="test-btn">Test Twitter Real Posting</button>
+        <div id="twitter-results"></div>
+    </div>
+
+    <div class="platform-test">
+        <h3>
+            <span class="status-indicator status-fixed"></span>
+            📘 Facebook - Fixed
+        </h3>
+        <p><strong>Status:</strong> 🔧 Fixed - Now uses real API instead of simulation</p>
+        <p><strong>API Endpoint:</strong> <code>/api/facebook/post</code></p>
+        <p><strong>What was fixed:</strong> Added Facebook posting logic to <code>publishPostDirect()</code> function</p>
+        <button onclick="testFacebookPosting()" class="test-btn">Test Facebook Real Posting</button>
+        <div id="facebook-results"></div>
+    </div>
+
+    <div class="platform-test">
+        <h3>
+            <span class="status-indicator status-fixed"></span>
+            📷 Instagram - Fixed  
+        </h3>
+        <p><strong>Status:</strong> 🔧 Fixed - Now uses real API instead of simulation</p>
+        <p><strong>API Endpoint:</strong> <code>/api/test-instagram-posting</code></p>
+        <p><strong>What was fixed:</strong> Added Instagram posting logic to <code>publishPostDirect()</code> function</p>
+        <button onclick="testInstagramPosting()" class="test-btn">Test Instagram Real Posting</button>
+        <div id="instagram-results"></div>
+    </div>
+
+    <div class="platform-test">
+        <h3>📱 End-to-End Test</h3>
+        <p>Test the complete flow from the main dashboard - this should now use REAL posting for all platforms:</p>
+        <a href="/dashboard" target="_blank">
+            <button class="test-btn">Open Dashboard & Test Real Posting</button>
+        </a>
+        <p><small>Create a post, select multiple platforms, and verify each shows "success" without "simulated" flag.</small></p>
+    </div>
+
+    <div class="summary">
+        <h3>🔍 How to Verify Real Posting:</h3>
+        <ol>
+            <li><strong>Check Browser Console:</strong> Look for "Making real API call..." messages</li>
+            <li><strong>Check Server Logs:</strong> Should see actual API responses, not simulation messages</li>
+            <li><strong>Check Social Accounts:</strong> Real posts should appear on your actual social media accounts</li>
+            <li><strong>Check Response Data:</strong> <code>simulated: false</code> in the response indicates real posting</li>
+        </ol>
+    </div>
+
+    <script>
+        function showResult(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const timestamp = new Date().toLocaleTimeString();
+            container.innerHTML += `<div class="result ${type}">[${timestamp}] ${message}</div>`;
+        }
+
+        async function testTwitterPosting() {
+            showResult('twitter-results', 'Testing Twitter real posting...', 'info');
+            
+            try {
+                const response = await fetch('/api/twitter/post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: '🧪 Testing real Twitter posting from Wezapost\\n\\n✅ This is a REAL post (not simulation)\\n\\n#wezapost #testing #realposting #' + Date.now()
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('twitter-results', `✅ SUCCESS: Real Twitter post created!\\n\\nTweet ID: ${result.tweet.id}\\nURL: ${result.tweet.url}\\nSimulated: ${result.simulated || 'false'}`, 'success');
+                } else {
+                    showResult('twitter-results', `❌ FAILED: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('twitter-results', `❌ ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFacebookPosting() {
+            showResult('facebook-results', 'Testing Facebook real posting...', 'info');
+            
+            try {
+                const response = await fetch('/api/facebook/post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: '🧪 Testing real Facebook posting from Wezapost\\n\\n✅ This should now use REAL Facebook API (not simulation)\\n\\n#wezapost #testing #realposting #' + Date.now()
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    const statusText = result.simulated ? '⚠️ DEMO MODE' : '✅ REAL POSTING';
+                    showResult('facebook-results', `${statusText}: Facebook post created!\\n\\nPost ID: ${result.post.id}\\nURL: ${result.post.url}\\nSimulated: ${result.simulated}\\nNote: ${result.note || 'N/A'}`, result.simulated ? 'warning' : 'success');
+                } else {
+                    showResult('facebook-results', `❌ FAILED: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('facebook-results', `❌ ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInstagramPosting() {
+            showResult('instagram-results', 'Testing Instagram real posting...', 'info');
+            
+            try {
+                // First, get connected accounts to find Instagram account
+                const accountResponse = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test_connection' })
+                });
+
+                const accountResult = await accountResponse.json();
+                
+                if (!accountResult.success) {
+                    showResult('instagram-results', `❌ No Instagram account available: ${accountResult.error}`, 'error');
+                    return;
+                }
+
+                const instagramAccount = accountResult.accounts.find(acc => acc.platform === 'instagram');
+                
+                const response = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'post',
+                        account: instagramAccount,
+                        content: '🧪 Testing real Instagram posting from Wezapost\\n\\n✅ This should now use REAL Instagram API (not simulation)\\n\\n#wezapost #testing #realposting #' + Date.now(),
+                        mediaUrls: ['https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=1000&h=1000&fit=crop&crop=entropy&auto=format&fm=jpg&q=80']
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('instagram-results', `✅ SUCCESS: Real Instagram post created!\\n\\nPost ID: ${result.postId}\\nURL: ${result.url}\\nPublished: ${result.publishedAt}`, 'success');
+                } else {
+                    showResult('instagram-results', `❌ FAILED: ${result.error}\\n\\nDetails: ${JSON.stringify(result.details, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('instagram-results', `❌ ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        // Show initial status
+        window.onload = () => {
+            showResult('twitter-results', 'Twitter was already working with real posting ✅', 'success');
+            showResult('facebook-results', 'Facebook updated to use real posting (was using simulation) 🔧', 'info');
+            showResult('instagram-results', 'Instagram updated to use real posting (was using simulation) 🔧', 'info');
+        };
+    </script>
+</body>
+</html>

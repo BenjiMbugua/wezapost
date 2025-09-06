@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Instagram Accounts</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .account { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+        }
+        .real { border-left: 4px solid #22c55e; }
+        .demo { border-left: 4px solid #ef4444; }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border-radius: 5px; 
+        }
+        .success { background: #dcfce7; border: 1px solid #22c55e; }
+        .error { background: #fef2f2; border: 1px solid #ef4444; }
+        .info { background: #dbeafe; border: 1px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <h1>Instagram Account Status Check</h1>
+    
+    <button onclick="checkLocalStorage()">Check localStorage</button>
+    <button onclick="checkSupabase()">Check Supabase Database</button>
+    <button onclick="testInstagramConnection()">Test Instagram Connection</button>
+    
+    <div id="results"></div>
+
+    <script>
+        function showResult(message, type) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += `<div class="result ${type}"><pre>${message}</pre></div>`;
+        }
+
+        function checkLocalStorage() {
+            showResult('=== CHECKING LOCALSTORAGE ===', 'info');
+            
+            const savedAccounts = localStorage.getItem('wezapost-demo-accounts');
+            if (!savedAccounts) {
+                showResult('No accounts found in localStorage', 'error');
+                return;
+            }
+
+            const accounts = JSON.parse(savedAccounts);
+            const instagramAccounts = accounts.filter(acc => acc.platform === 'instagram');
+            
+            showResult(`Found ${instagramAccounts.length} Instagram accounts in localStorage:`, 'info');
+            
+            instagramAccounts.forEach((account, index) => {
+                const isReal = account.username === 'Wezalabstech' || 
+                              account.username === 'Wezalabs Wezalabs' || 
+                              account.id.includes('real') ||
+                              account.real_oauth === true;
+                
+                showResult(`Account ${index + 1}:
+- ID: ${account.id}
+- Username: ${account.username}
+- Display Name: ${account.display_name}
+- Platform: ${account.platform}
+- Is Real: ${isReal ? '✅ YES' : '❌ NO (Demo)'}
+- Has Access Token: ${account.access_token ? '✅ YES' : '❌ NO'}
+- Facebook Page ID: ${account.facebook_page_id || 'Not set'}
+- Real OAuth: ${account.real_oauth ? '✅ YES' : '❌ NO'}
+- Created: ${account.created_at}`, isReal ? 'success' : 'error');
+            });
+        }
+
+        async function checkSupabase() {
+            showResult('=== CHECKING SUPABASE DATABASE ===', 'info');
+            
+            try {
+                const response = await fetch('/api/auth/session');
+                const session = await response.json();
+                
+                if (!session?.user?.id) {
+                    showResult('Not authenticated - cannot check database', 'error');
+                    return;
+                }
+
+                // Call the API to check database accounts
+                const dbResponse = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_database' })
+                });
+
+                const result = await dbResponse.json();
+                
+                if (result.success) {
+                    showResult(`Found ${result.accounts.length} accounts in database:`, 'success');
+                    result.accounts.forEach((account, index) => {
+                        showResult(`Account ${index + 1}:
+- ID: ${account.id}
+- Username: ${account.username}
+- Platform: ${account.platform}
+- Is Active: ${account.is_active}
+- Created: ${account.created_at}`, 'info');
+                    });
+                } else {
+                    showResult(`Database check failed: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`Error checking database: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInstagramConnection() {
+            showResult('=== TESTING INSTAGRAM CONNECTION ===', 'info');
+            
+            try {
+                const response = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test_connection' })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('Instagram connection test passed!', 'success');
+                    if (result.accounts && result.accounts.length > 0) {
+                        showResult(`Ready to post to ${result.accounts.length} Instagram accounts`, 'success');
+                    }
+                } else {
+                    showResult(`Connection test failed: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`Error testing connection: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check on load
+        window.onload = () => {
+            checkLocalStorage();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔧 Debug Twitter Connection</title>
+    <style>
+        body { 
+            font-family: monospace;
+            padding: 20px; 
+            background: #f8fafc; 
+            color: #1e293b;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        .success { background: #dcfce7; border-color: #22c55e; color: #16a34a; }
+        .error { background: #fecaca; border-color: #ef4444; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔧 WezaPost Connection Debugger</h2>
+        <p>Let's debug why Twitter isn't connecting...</p>
+        
+        <button onclick="checkAuthStatus()">1. Check Auth Status</button>
+        <button onclick="checkLocalStorage()">2. Check Saved Accounts</button>
+        <button onclick="testDemoConnection()">3. Test Demo Connection</button>
+        <button onclick="clearAndRetry()">4. Clear & Retry</button>
+        
+        <div id="results"></div>
+        
+        <h3>Manual Steps:</h3>
+        <ol>
+            <li>Open WezaPost: <button onclick="window.open('http://localhost:3001/dashboard', '_blank')">Open Dashboard</button></li>
+            <li>Sign in with Google (if not already signed in)</li>
+            <li>Try clicking "Connect" next to Twitter</li>
+            <li>Wait 2-3 seconds for connection process</li>
+            <li>Check if account appears in "Connected Accounts" section</li>
+        </ol>
+    </div>
+
+    <script>
+        function addResult(message, type = 'result') {
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/session');
+                const session = await response.json();
+                
+                if (session && session.user) {
+                    addResult(`✅ Authenticated as: ${session.user.name} (${session.user.email})`, 'success');
+                    addResult(`User ID: ${session.user.id}`, 'success');
+                } else {
+                    addResult(`⚠️ Not authenticated - this will use demo mode`, 'error');
+                    addResult(`Sign in with Google to enable full OAuth functionality`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Auth check failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkLocalStorage() {
+            try {
+                const savedAccounts = localStorage.getItem('wezapost-demo-accounts');
+                if (savedAccounts) {
+                    const accounts = JSON.parse(savedAccounts);
+                    addResult(`✅ Found ${accounts.length} saved demo accounts`, 'success');
+                    accounts.forEach(acc => {
+                        addResult(`- ${acc.platform}: ${acc.username} (${acc.display_name})`, 'result');
+                    });
+                } else {
+                    addResult(`ℹ️ No saved demo accounts found`, 'result');
+                    addResult(`This is normal for first-time use`, 'result');
+                }
+            } catch (error) {
+                addResult(`❌ LocalStorage check failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDemoConnection() {
+            addResult(`🔄 Testing demo Twitter connection...`, 'result');
+            
+            try {
+                // Simulate the demo connection process
+                const mockAccount = {
+                    id: `mock-twitter-${Date.now()}`,
+                    platform: 'twitter',
+                    username: `demo_twitter_user`,
+                    display_name: `Demo Twitter Account`,
+                    avatar_url: `https://ui-avatars.com/api/?name=twitter&background=random`,
+                    is_active: true,
+                    settings: {
+                        auto_post: true,
+                        default_visibility: 'public',
+                        custom_hashtags: ['#twitter', '#socialmedia', '#wezapost'],
+                    }
+                };
+
+                // Save to localStorage
+                const existingAccounts = JSON.parse(localStorage.getItem('wezapost-demo-accounts') || '[]');
+                const newAccounts = [...existingAccounts, mockAccount];
+                localStorage.setItem('wezapost-demo-accounts', JSON.stringify(newAccounts));
+
+                addResult(`✅ Demo Twitter account created successfully!`, 'success');
+                addResult(`Username: ${mockAccount.username}`, 'success');
+                addResult(`ID: ${mockAccount.id}`, 'success');
+                addResult(`Now refresh your WezaPost dashboard to see it`, 'success');
+                
+            } catch (error) {
+                addResult(`❌ Demo connection test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearAndRetry() {
+            localStorage.removeItem('wezapost-demo-accounts');
+            addResult(`🗑️ Cleared all saved demo accounts`, 'result');
+            addResult(`Now try connecting Twitter again in the dashboard`, 'result');
+        }
+
+        // Auto-run initial checks
+        window.onload = () => {
+            addResult(`🚀 Starting WezaPost connection diagnostics...`, 'result');
+            setTimeout(checkAuthStatus, 500);
+            setTimeout(checkLocalStorage, 1000);
+        };
+    </script>
+</body>
+</html>

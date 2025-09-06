@@ -1,0 +1,10 @@
+{
+  "content": "Test post for your authenticated account! This should appear in the curated posts tab.",
+  "hashtags": ["#authenticated", "#account", "#working"],
+  "platforms": ["twitter", "linkedin"],
+  "workflow_id": "auth-account-test",
+  "metadata": {
+    "priority": "high",
+    "source_url": "https://benjimbugua.com/test"
+  }
+}

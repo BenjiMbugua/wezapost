@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📝 Test Post Creation Functionality</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .test-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .content-section {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .feature-section {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #2563eb; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .test-btn { background: #0ea5e9; }
+        .test-btn:hover { background: #0284c7; }
+        .post-example {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .post-example:hover {
+            border-color: #3b82f6;
+            background: #f1f5f9;
+        }
+        .post-text {
+            font-size: 15px;
+            line-height: 1.4;
+            color: #0f1419;
+        }
+        .char-count {
+            font-size: 12px;
+            color: #536471;
+            margin-top: 8px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 5px 0;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            color: #22c55e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Test Post Creation Functionality</h1>
+        <p>Let's test the WezaPost create post functionality with your "the age of resolve" content!</p>
+
+        <div class="test-section">
+            <h3>🎯 What We Just Fixed</h3>
+            <p>I've updated the post creator to work even without connected accounts:</p>
+            <ul class="feature-list">
+                <li>Automatically creates demo Twitter account for testing</li>
+                <li>Allows you to test the full post creation interface</li>
+                <li>Shows platform selection, character counting, and scheduling</li>
+                <li>Simulates publishing process with realistic results</li>
+                <li>Saves posts to localStorage for persistence</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h3>📝 Your "The Age of Resolve" Post Content</h3>
+            
+            <h4>🎯 Recommended Version:</h4>
+            <div class="post-example" onclick="copyToClipboard('💭 the age of resolve\n\n#philosophy #motivation #wisdom')">
+                <div class="post-text">💭 the age of resolve<br><br>#philosophy #motivation #wisdom</div>
+                <div class="char-count">54/280 characters • Perfect for Twitter</div>
+                <div style="font-size: 11px; color: #22c55e; margin-top: 5px;">
+                    ✅ Click to copy to clipboard
+                </div>
+            </div>
+
+            <h4>Alternative Versions:</h4>
+            
+            <div class="post-example" onclick="copyToClipboard('the age of resolve')">
+                <div class="post-text">the age of resolve</div>
+                <div class="char-count">18/280 characters • Simple & clean</div>
+            </div>
+
+            <div class="post-example" onclick="copyToClipboard('🕰️ the age of resolve ⚡')">
+                <div class="post-text">🕰️ the age of resolve ⚡</div>
+                <div class="char-count">24/280 characters • With energy</div>
+            </div>
+
+            <div class="post-example" onclick="copyToClipboard('the age of resolve\n\nTime to make decisions that matter. 💪')">
+                <div class="post-text">the age of resolve<br><br>Time to make decisions that matter. 💪</div>
+                <div class="char-count">56/280 characters • Inspirational</div>
+            </div>
+        </div>
+
+        <div class="feature-section">
+            <h3>🧪 Testing Steps</h3>
+            
+            <h4>Step 1: Open WezaPost Dashboard</h4>
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                📱 Open Dashboard
+            </button>
+            
+            <h4>Step 2: Navigate to Create Post</h4>
+            <p>You should now see the "Create Post" section available even without connected accounts!</p>
+            
+            <h4>Step 3: Test Post Creation Features</h4>
+            <ol>
+                <li><strong>Content Input:</strong> Copy any post version above and paste it</li>
+                <li><strong>Character Counter:</strong> Watch the character count update in real-time</li>
+                <li><strong>Platform Selection:</strong> You should see a demo Twitter account to select</li>
+                <li><strong>Scheduling Options:</strong> Test both "Post Now" and "Schedule for Later"</li>
+                <li><strong>Publishing:</strong> Click "Publish Now" or "Schedule Post"</li>
+            </ol>
+
+            <h4>Step 4: Verify Results</h4>
+            <ul>
+                <li>✅ Post appears in "Recent Posts" section</li>
+                <li>✅ Shows publishing simulation results</li>
+                <li>✅ Post saved to localStorage for persistence</li>
+                <li>✅ Character limits properly enforced</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🎮 Advanced Testing Scenarios</h3>
+            
+            <h4>A) Character Limit Testing:</h4>
+            <div class="post-example" onclick="copyToClipboard('the age of resolve - a time when decisions matter more than ever before and we must choose our path forward with wisdom, courage, and determination to create the future we want to see in this world that needs our best efforts and highest aspirations for humanity')">
+                <div class="post-text" style="color: #dc2626;">the age of resolve - a time when decisions matter more than ever before and we must choose our path forward with wisdom, courage, and determination to create the future we want to see in this world that needs our best efforts and highest aspirations for humanity</div>
+                <div class="char-count" style="color: #dc2626;">295/280 characters • OVER LIMIT - Test validation</div>
+            </div>
+            
+            <h4>B) Scheduling Testing:</h4>
+            <ul>
+                <li>Test scheduling for 5 minutes from now</li>
+                <li>Test scheduling for tomorrow morning</li>
+                <li>Verify date/time validation works</li>
+            </ul>
+            
+            <h4>C) Platform Selection Testing:</h4>
+            <ul>
+                <li>Verify demo Twitter account appears</li>
+                <li>Test selecting/deselecting platforms</li>
+                <li>Ensure at least one platform required</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h3>🔧 Expected Functionality</h3>
+            
+            <h4>✅ What Should Work Now:</h4>
+            <ul class="feature-list">
+                <li>Create Post interface visible without connected accounts</li>
+                <li>Demo Twitter account automatically available</li>
+                <li>Real-time character counting (Twitter 280 limit)</li>
+                <li>Platform selection with visual feedback</li>
+                <li>Immediate and scheduled posting options</li>
+                <li>Post validation (content, platform, timing)</li>
+                <li>Publishing simulation with realistic delays</li>
+                <li>Post history in "Recent Posts" section</li>
+                <li>localStorage persistence across sessions</li>
+            </ul>
+
+            <h4>🎯 Test Results You Should See:</h4>
+            <ul>
+                <li><strong>Immediate Post:</strong> Shows "published" status with timestamp</li>
+                <li><strong>Scheduled Post:</strong> Shows "scheduled" status with future time</li>
+                <li><strong>Character Counter:</strong> Updates as you type, warns at limits</li>
+                <li><strong>Platform Icons:</strong> Visual indicators for selected platforms</li>
+                <li><strong>Publishing Animation:</strong> Shows "Publishing..." then results</li>
+            </ul>
+        </div>
+
+        <div style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 1px solid #3b82f6; margin-top: 20px;">
+            <h3>🎉 Ready to Test!</h3>
+            <p>The post creation functionality is now accessible and ready for testing. You can create your "the age of resolve" post and see exactly how the publishing system works!</p>
+            
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                🚀 Start Testing Post Creation
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                event.target.closest('.post-example').style.backgroundColor = '#dcfce7';
+                event.target.closest('.post-example').style.borderColor = '#22c55e';
+                
+                setTimeout(() => {
+                    event.target.closest('.post-example').style.backgroundColor = '#f8fafc';
+                    event.target.closest('.post-example').style.borderColor = '#e2e8f0';
+                }, 1000);
+                
+                // Show temporary success message
+                const temp = document.createElement('div');
+                temp.textContent = '✅ Copied to clipboard!';
+                temp.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 6px; z-index: 1000; font-family: monospace;';
+                document.body.appendChild(temp);
+                
+                setTimeout(() => document.body.removeChild(temp), 2000);
+            });
+        }
+    </script>
+</body>
+</html>

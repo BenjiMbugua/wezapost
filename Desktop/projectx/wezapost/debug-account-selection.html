@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐛 Debug Account Selection</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .debug-section {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #2563eb; }
+        .debug-btn { background: #f59e0b; }
+        .debug-btn:hover { background: #d97706; }
+        pre {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Debug Account Selection Issue</h1>
+        <p>Let's debug why the account selection isn't working properly.</p>
+
+        <div class="debug-section">
+            <h3>🔍 Current Status Check</h3>
+            <button onclick="checkAccountsAndState()" class="debug-btn">🔍 Debug Account Selection</button>
+            <div id="debugOutput"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>🛠️ Quick Fixes to Try</h3>
+            
+            <h4>Option 1: Clear All Storage and Reset</h4>
+            <button onclick="clearAllStorage()" class="debug-btn">🧹 Clear All localStorage</button>
+            
+            <h4>Option 2: Manually Create Real Account</h4>
+            <button onclick="createRealTwitterAccount()" class="debug-btn">➕ Force Create @Wezalabstech</button>
+            
+            <h4>Option 3: Auto-Select Account</h4>
+            <button onclick="autoSelectAccount()" class="debug-btn">✅ Auto-Select First Account</button>
+        </div>
+
+        <div class="success-section">
+            <h3>📱 Test Steps</h3>
+            <ol>
+                <li><strong>Click "Debug Account Selection"</strong> to see current state</li>
+                <li><strong>Try the quick fixes above</strong></li>
+                <li><strong>Open WezaPost Dashboard:</strong>
+                    <button onclick="window.open('http://localhost:3001/dashboard', '_blank')">
+                        📱 Open Dashboard
+                    </button>
+                </li>
+                <li><strong>Check browser console</strong> for debugging logs</li>
+                <li><strong>Try clicking on account button</strong> and watch console</li>
+                <li><strong>Add content "the age of resolve"</strong> and test publish</li>
+            </ol>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function showResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type === 'success' ? 'success-section' : 'debug-section';
+            div.innerHTML = message;
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            results.appendChild(div);
+        }
+
+        async function checkAccountsAndState() {
+            const output = document.getElementById('debugOutput');
+            output.innerHTML = '<p>🔄 Debugging account selection...</p>';
+            
+            let debugInfo = '<h4>🔍 Debug Information:</h4>';
+            
+            try {
+                // Check session
+                const sessionResponse = await fetch('http://localhost:3001/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                debugInfo += `<strong>1. Authentication Status:</strong><br>`;
+                if (session && session.user) {
+                    debugInfo += `✅ Authenticated as: ${session.user.name} (${session.user.email})<br><br>`;
+                } else {
+                    debugInfo += `❌ Not authenticated - this is the problem!<br><br>`;
+                }
+                
+                // Check localStorage
+                debugInfo += `<strong>2. localStorage Accounts:</strong><br>`;
+                const savedAccounts = localStorage.getItem('wezapost-demo-accounts');
+                if (savedAccounts) {
+                    const accounts = JSON.parse(savedAccounts);
+                    debugInfo += `Found ${accounts.length} accounts:<br>`;
+                    accounts.forEach(acc => {
+                        const type = acc.username === 'Wezalabstech' ? 'REAL' : 'DEMO';
+                        debugInfo += `• ${type}: @${acc.username} (platform: ${acc.platform})<br>`;
+                    });
+                } else {
+                    debugInfo += `❌ No accounts in localStorage<br>`;
+                }
+                debugInfo += '<br>';
+                
+                // Check what accounts would be filtered
+                if (session && session.user && savedAccounts) {
+                    const accounts = JSON.parse(savedAccounts);
+                    const filteredAccounts = accounts.filter(account => 
+                        account.username === 'Wezalabstech' || 
+                        account.id.includes('real') || 
+                        !account.id.includes('demo')
+                    );
+                    
+                    debugInfo += `<strong>3. Filtered Accounts (what post creator should see):</strong><br>`;
+                    if (filteredAccounts.length > 0) {
+                        filteredAccounts.forEach(acc => {
+                            debugInfo += `✅ @${acc.username} (platform: ${acc.platform})<br>`;
+                        });
+                    } else {
+                        debugInfo += `❌ No accounts after filtering - this is the problem!<br>`;
+                    }
+                }
+                
+                output.innerHTML = `<div style="background: #f1f5f9; padding: 15px; border-radius: 6px;"><pre>${debugInfo}</pre></div>`;
+                
+            } catch (error) {
+                output.innerHTML = `<div class="debug-section">❌ Debug failed: ${error.message}</div>`;
+            }
+        }
+
+        function clearAllStorage() {
+            localStorage.removeItem('wezapost-demo-accounts');
+            localStorage.removeItem('wezapost-demo-posts');
+            showResult('✅ All localStorage cleared! Now refresh the dashboard and sign in again.', 'success');
+        }
+
+        async function createRealTwitterAccount() {
+            try {
+                // Check if authenticated first
+                const sessionResponse = await fetch('http://localhost:3001/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                if (!session?.user) {
+                    showResult('❌ Please sign in with Google first at the dashboard', 'error');
+                    return;
+                }
+
+                // Create real account
+                const realAccount = {
+                    id: 'real-twitter-wezalabstech',
+                    platform: 'twitter',
+                    username: 'Wezalabstech',
+                    display_name: 'wezalabs tech',
+                    avatar_url: 'https://ui-avatars.com/api/?name=Wezalabstech&background=1da1f2',
+                    is_active: true,
+                    real_oauth: true,
+                    settings: {
+                        auto_post: true,
+                        default_visibility: 'public',
+                        custom_hashtags: ['#twitter'],
+                    }
+                };
+
+                localStorage.setItem('wezapost-demo-accounts', JSON.stringify([realAccount]));
+                
+                showResult(`✅ Real Twitter account created!<br>
+                    <strong>Username:</strong> @${realAccount.username}<br>
+                    <strong>Platform:</strong> ${realAccount.platform}<br>
+                    <strong>Type:</strong> Real OAuth Account<br><br>
+                    Now refresh your dashboard!`, 'success');
+                
+            } catch (error) {
+                showResult(`❌ Failed to create account: ${error.message}`, 'error');
+            }
+        }
+
+        function autoSelectAccount() {
+            // This would need to be done in the actual app, but we can provide instructions
+            showResult(`ℹ️ <strong>Manual Fix Instructions:</strong><br><br>
+                1. Open browser developer tools (F12)<br>
+                2. Go to Console tab<br>
+                3. In the dashboard, look for logs like "Account: Wezalabstech, Platform: twitter, IsSelected: false"<br>
+                4. Click on the account button and watch for "Toggling platform: twitter" logs<br>
+                5. If the platform value doesn't match, that's the issue<br><br>
+                <strong>If account exists but won't select:</strong><br>
+                The platform toggle function might be using the wrong platform identifier.`, 'info');
+        }
+
+        // Auto-run debug check
+        window.onload = () => {
+            setTimeout(checkAccountsAndState, 1000);
+        };
+    </script>
+</body>
+</html>

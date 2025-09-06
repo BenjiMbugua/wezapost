@@ -1,0 +1,168 @@
+{
+  "global_curated": [
+    {
+      "id": "n8n_1755795556479_ff33nndft",
+      "content": "RAG can help nonprofits test smarter by spotlighting urgent tasks and boosting impact with focused automation ⚡️ Save time, cut errors, and amplify good causes! #WezaLabs #n8n #Automation #AIWorkflows #NonprofitTech",
+      "hashtags": [
+        "#WezaLabs",
+        "#n8n",
+        "#Automation",
+        "#AIWorkflows",
+        "#NonprofitTech"
+      ],
+      "images": [
+        {
+          "id": "img_1755795556480_0",
+          "url": "https://cdn.wezalabs.com/social/1200x675_rag_nonprofit.png",
+          "alt_text": "Minimal social card: RAG in non-profit with neutral background and subtle WezaLabs accent, large legible headline",
+          "caption": "n8n Tip: RAG in non-profit",
+          "is_primary": true
+        }
+      ],
+      "links": [],
+      "platforms": [
+        "twitter"
+      ],
+      "source": {
+        "type": "n8n",
+        "workflow_id": "wezalabs_twitter_curator_v1",
+        "source_url": "",
+        "curated_at": "2025-08-21T16:59:16.480Z"
+      },
+      "status": "draft",
+      "metadata": {
+        "character_count": 215,
+        "estimated_engagement": 60,
+        "content_type": "image",
+        "topics": [
+          "wez alabs",
+          "wordpress",
+          "seo",
+          "n8n",
+          "ai agents",
+          "automation"
+        ],
+        "sentiment": "neutral"
+      },
+      "scheduling": {
+        "suggested_time": "2024-06-24T12:00:00-07:00",
+        "optimal_platforms": [
+          "twitter"
+        ],
+        "priority": "normal"
+      },
+      "created_at": "2025-08-21T16:59:16.480Z",
+      "updated_at": "2025-08-21T16:59:16.480Z"
+    },
+    {
+      "id": "n8n_1755795556479_ff33nndft",
+      "content": "RAG can help nonprofits test smarter by spotlighting urgent tasks and boosting impact with focused automation ⚡️ Save time, cut errors, and amplify good causes! #WezaLabs #n8n #Automation #AIWorkflows #NonprofitTech",
+      "hashtags": [
+        "#WezaLabs",
+        "#n8n",
+        "#Automation",
+        "#AIWorkflows",
+        "#NonprofitTech"
+      ],
+      "images": [
+        {
+          "id": "img_1755795556480_0",
+          "url": "https://cdn.wezalabs.com/social/1200x675_rag_nonprofit.png",
+          "alt_text": "Minimal social card: RAG in non-profit with neutral background and subtle WezaLabs accent, large legible headline",
+          "caption": "n8n Tip: RAG in non-profit",
+          "is_primary": true
+        }
+      ],
+      "links": [],
+      "platforms": [
+        "twitter"
+      ],
+      "source": {
+        "type": "n8n",
+        "workflow_id": "wezalabs_twitter_curator_v1",
+        "source_url": "",
+        "curated_at": "2025-08-21T16:59:16.480Z"
+      },
+      "status": "draft",
+      "metadata": {
+        "character_count": 215,
+        "estimated_engagement": 60,
+        "content_type": "image",
+        "topics": [
+          "wez alabs",
+          "wordpress",
+          "seo",
+          "n8n",
+          "ai agents",
+          "automation"
+        ],
+        "sentiment": "neutral"
+      },
+      "scheduling": {
+        "suggested_time": "2024-06-24T12:00:00-07:00",
+        "optimal_platforms": [
+          "twitter"
+        ],
+        "priority": "normal"
+      },
+      "created_at": "2025-08-21T16:59:16.480Z",
+      "updated_at": "2025-08-21T16:59:16.480Z"
+    }
+  ],
+  "demo_user": [
+    {
+      "id": "n8n_1755795556479_ff33nndft",
+      "content": "RAG can help nonprofits test smarter by spotlighting urgent tasks and boosting impact with focused automation ⚡️ Save time, cut errors, and amplify good causes! #WezaLabs #n8n #Automation #AIWorkflows #NonprofitTech",
+      "hashtags": [
+        "#WezaLabs",
+        "#n8n",
+        "#Automation",
+        "#AIWorkflows",
+        "#NonprofitTech"
+      ],
+      "images": [
+        {
+          "id": "img_1755795556480_0",
+          "url": "https://cdn.wezalabs.com/social/1200x675_rag_nonprofit.png",
+          "alt_text": "Minimal social card: RAG in non-profit with neutral background and subtle WezaLabs accent, large legible headline",
+          "caption": "n8n Tip: RAG in non-profit",
+          "is_primary": true
+        }
+      ],
+      "links": [],
+      "platforms": [
+        "twitter"
+      ],
+      "source": {
+        "type": "n8n",
+        "workflow_id": "wezalabs_twitter_curator_v1",
+        "source_url": "",
+        "curated_at": "2025-08-21T16:59:16.480Z"
+      },
+      "status": "draft",
+      "metadata": {
+        "character_count": 215,
+        "estimated_engagement": 60,
+        "content_type": "image",
+        "topics": [
+          "wez alabs",
+          "wordpress",
+          "seo",
+          "n8n",
+          "ai agents",
+          "automation"
+        ],
+        "sentiment": "neutral"
+      },
+      "scheduling": {
+        "suggested_time": "2024-06-24T12:00:00-07:00",
+        "optimal_platforms": [
+          "twitter"
+        ],
+        "priority": "normal"
+      },
+      "created_at": "2025-08-21T16:59:16.480Z",
+      "updated_at": "2025-08-21T16:59:16.480Z"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "content": "Test from stable tunnel! This curated post is coming through the secure Cloudflare tunnel integration.",
+  "hashtags": ["#TunnelTest", "#WezaPost", "#n8nIntegration"],
+  "platforms": ["twitter", "linkedin"],
+  "metadata": {
+    "source_url": "https://benjimbugua.com/test",
+    "priority": "high"
+  },
+  "workflow_id": "stable-tunnel-test"
+}

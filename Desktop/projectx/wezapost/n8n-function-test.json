@@ -1,0 +1,41 @@
+{
+  "content": "🚀 Transform your nonprofit's research workflow with RAG technology! Cut research time by 75% while delivering more impactful insights to donors. Smart AI integration that amplifies your mission without the complexity. Ready to revolutionize your impact? #WezaLabs #NonProfitTech #AIWorkflows #Automation #TechSolutions",
+  "hashtags": [
+    "#WezaLabs",
+    "#NonProfitTech", 
+    "#AIWorkflows",
+    "#Automation",
+    "#TechSolutions"
+  ],
+  "images": [
+    {
+      "url": "https://cdn.wezalabs.com/social/rag-nonprofit-1200x675.png",
+      "alt_text": "AI-powered interface showing data insights boosting non-profit fundraising",
+      "caption": "RAG boosting non-profit results"
+    }
+  ],
+  "platforms": [
+    "twitter"
+  ],
+  "metadata": {
+    "source_url": "",
+    "topics": [
+      "wez alabs",
+      "wordpress", 
+      "seo",
+      "n8n",
+      "ai agents",
+      "automation"
+    ],
+    "content_type": "tip",
+    "priority": "normal"
+  },
+  "scheduling": {
+    "suggested_time": "2025-08-21T20:00:00Z",
+    "optimal_platforms": [
+      "twitter"
+    ]
+  },
+  "workflow_id": "wezalabs_twitter_curator_v2",
+  "source_type": "n8n"
+}

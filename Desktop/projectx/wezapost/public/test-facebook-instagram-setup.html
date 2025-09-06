@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook & Instagram Setup Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .status { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .step { margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #007bff; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Facebook & Instagram Setup Test</h1>
+    
+    <div class="section info">
+        <h2>📋 Setup Checklist</h2>
+        <div class="step">
+            <h3>1. Facebook Developer App</h3>
+            <p>✅ Create Facebook App at <a href="https://developers.facebook.com/" target="_blank">developers.facebook.com</a></p>
+            <ul>
+                <li>App Type: Business</li>
+                <li>Add Facebook Login product</li>
+                <li>Add Instagram Basic Display product</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>2. OAuth Redirect URIs</h3>
+            <p>Add these URLs to your Facebook app settings:</p>
+            <pre id="callback-urls">
+http://localhost:3000/api/social/facebook/callback
+http://localhost:3000/api/social/instagram/callback
+
+For production:
+https://your-domain.com/api/social/facebook/callback
+https://your-domain.com/api/social/instagram/callback
+            </pre>
+        </div>
+        
+        <div class="step">
+            <h3>3. Required Permissions</h3>
+            <p>Request these permissions in App Review:</p>
+            <ul>
+                <li><strong>pages_manage_posts</strong> - Post to Facebook pages</li>
+                <li><strong>pages_read_engagement</strong> - Read page data</li>
+                <li><strong>pages_show_list</strong> - Access page list</li>
+                <li><strong>business_management</strong> - Business Manager access</li>
+                <li><strong>instagram_basic</strong> - Basic Instagram access</li>
+                <li><strong>instagram_content_publish</strong> - Publish to Instagram</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>4. Prerequisites</h3>
+            <ul>
+                <li>✅ Facebook Business Manager Account</li>
+                <li>✅ At least one Facebook Page</li>
+                <li>✅ Instagram Business Account (connected to Facebook Page)</li>
+                <li>⚠️ App permissions approved (may require business verification)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔗 OAuth Connection Tests</h2>
+        
+        <div>
+            <h3>Facebook Connection</h3>
+            <button onclick="testFacebookConnection()">Test Facebook OAuth</button>
+            <button onclick="connectFacebook()">Connect Facebook Account</button>
+            <div id="facebook-status" class="status"></div>
+        </div>
+        
+        <div>
+            <h3>Instagram Connection</h3>
+            <button onclick="testInstagramConnection()">Test Instagram OAuth</button>
+            <button onclick="connectInstagram()">Connect Instagram Account</button>
+            <div id="instagram-status" class="status"></div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>📝 Test Posting</h2>
+        <div>
+            <label for="test-content">Test Post Content:</label><br>
+            <textarea id="test-content" rows="4" cols="60" placeholder="Enter test content to post...">🚀 Testing WezaPost integration with Facebook and Instagram! This is a test post from our social media scheduler.</textarea>
+        </div>
+        <div>
+            <label for="test-media">Media URL (optional):</label><br>
+            <input type="url" id="test-media" placeholder="https://example.com/image.jpg" style="width: 400px;">
+        </div>
+        <div style="margin-top: 10px;">
+            <button onclick="testFacebookPost()">Test Facebook Post</button>
+            <button onclick="testInstagramPost()">Test Instagram Post</button>
+        </div>
+        <div id="post-status" class="status"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔍 Environment Check</h2>
+        <button onclick="checkEnvironment()">Check Environment Variables</button>
+        <div id="env-status" class="status"></div>
+    </div>
+
+    <div class="section">
+        <h2>📊 Connection Status</h2>
+        <button onclick="checkConnections()">Check Connected Accounts</button>
+        <div id="connection-status" class="status"></div>
+    </div>
+
+    <script>
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = message;
+            element.className = `status ${type}`;
+        }
+
+        async function testFacebookConnection() {
+            updateStatus('facebook-status', '🔄 Testing Facebook OAuth configuration...', 'info');
+            
+            try {
+                const response = await fetch('/api/social/facebook/connect');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatus('facebook-status', 
+                        `✅ Facebook OAuth URL generated successfully!<br>
+                        <small>Auth URL: ${data.authUrl}</small>`, 'success');
+                } else {
+                    updateStatus('facebook-status', 
+                        `❌ Facebook OAuth test failed: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('facebook-status', 
+                    `❌ Error testing Facebook connection: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInstagramConnection() {
+            updateStatus('instagram-status', '🔄 Testing Instagram OAuth configuration...', 'info');
+            
+            try {
+                const response = await fetch('/api/social/instagram/connect');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatus('instagram-status', 
+                        `✅ Instagram OAuth URL generated successfully!<br>
+                        <small>Auth URL: ${data.authUrl}</small>`, 'success');
+                } else {
+                    updateStatus('instagram-status', 
+                        `❌ Instagram OAuth test failed: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('instagram-status', 
+                    `❌ Error testing Instagram connection: ${error.message}`, 'error');
+            }
+        }
+
+        async function connectFacebook() {
+            updateStatus('facebook-status', '🔄 Connecting to Facebook...', 'info');
+            
+            try {
+                const response = await fetch('/api/social/facebook/connect');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Redirect to Facebook OAuth
+                    window.location.href = data.authUrl;
+                } else {
+                    updateStatus('facebook-status', 
+                        `❌ Failed to initiate Facebook connection: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('facebook-status', 
+                    `❌ Error connecting to Facebook: ${error.message}`, 'error');
+            }
+        }
+
+        async function connectInstagram() {
+            updateStatus('instagram-status', '🔄 Connecting to Instagram...', 'info');
+            
+            try {
+                const response = await fetch('/api/social/instagram/connect');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Redirect to Instagram OAuth (via Facebook)
+                    window.location.href = data.authUrl;
+                } else {
+                    updateStatus('instagram-status', 
+                        `❌ Failed to initiate Instagram connection: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('instagram-status', 
+                    `❌ Error connecting to Instagram: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFacebookPost() {
+            const content = document.getElementById('test-content').value;
+            const mediaUrl = document.getElementById('test-media').value;
+            
+            updateStatus('post-status', '🔄 Testing Facebook post...', 'info');
+            
+            try {
+                const response = await fetch('/api/test-social-posting', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        platform: 'facebook',
+                        content: content,
+                        media_urls: mediaUrl ? [mediaUrl] : undefined
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatus('post-status', 
+                        `✅ Facebook post test successful!<br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`, 'success');
+                } else {
+                    updateStatus('post-status', 
+                        `❌ Facebook post test failed: ${data.error}<br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`, 'error');
+                }
+            } catch (error) {
+                updateStatus('post-status', 
+                    `❌ Error testing Facebook post: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInstagramPost() {
+            const content = document.getElementById('test-content').value;
+            const mediaUrl = document.getElementById('test-media').value;
+            
+            if (!mediaUrl) {
+                updateStatus('post-status', 
+                    '⚠️ Instagram requires media (photo/video). Please add a media URL.', 'error');
+                return;
+            }
+            
+            updateStatus('post-status', '🔄 Testing Instagram post...', 'info');
+            
+            try {
+                const response = await fetch('/api/test-social-posting', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        platform: 'instagram',
+                        content: content,
+                        media_urls: [mediaUrl]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatus('post-status', 
+                        `✅ Instagram post test successful!<br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`, 'success');
+                } else {
+                    updateStatus('post-status', 
+                        `❌ Instagram post test failed: ${data.error}<br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`, 'error');
+                }
+            } catch (error) {
+                updateStatus('post-status', 
+                    `❌ Error testing Instagram post: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkEnvironment() {
+            updateStatus('env-status', '🔄 Checking environment variables...', 'info');
+            
+            try {
+                const response = await fetch('/api/test-supabase');
+                const data = await response.json();
+                
+                const envCheck = {
+                    facebook_configured: data.env?.FACEBOOK_CLIENT_ID && data.env?.FACEBOOK_CLIENT_SECRET,
+                    instagram_configured: data.env?.INSTAGRAM_CLIENT_ID && data.env?.INSTAGRAM_CLIENT_SECRET,
+                    nextauth_configured: data.env?.NEXTAUTH_SECRET
+                };
+                
+                updateStatus('env-status', 
+                    `📊 Environment Status:<br>
+                    ✅ Facebook: ${envCheck.facebook_configured ? 'Configured' : '❌ Missing'}<br>
+                    ✅ Instagram: ${envCheck.instagram_configured ? 'Configured' : '❌ Missing'}<br>
+                    ✅ NextAuth: ${envCheck.nextauth_configured ? 'Configured' : '❌ Missing'}<br>
+                    <small>Note: Values are hidden for security</small>`, 
+                    envCheck.facebook_configured && envCheck.instagram_configured ? 'success' : 'error');
+                    
+            } catch (error) {
+                updateStatus('env-status', 
+                    `❌ Error checking environment: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkConnections() {
+            updateStatus('connection-status', '🔄 Checking connected accounts...', 'info');
+            
+            try {
+                // This would require authentication, so we'll just check if the endpoints exist
+                updateStatus('connection-status', 
+                    `ℹ️ To check connected accounts, you need to be signed in.<br>
+                    Use the dashboard at <a href="/dashboard">/dashboard</a> to view connected accounts.`, 'info');
+                    
+            } catch (error) {
+                updateStatus('connection-status', 
+                    `❌ Error checking connections: ${error.message}`, 'error');
+            }
+        }
+
+        // Check URL parameters for auth results
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('success') === 'facebook_connected') {
+                updateStatus('facebook-status', 
+                    `✅ Facebook account connected successfully! Pages: ${urlParams.get('pages') || 0}`, 'success');
+            }
+            
+            if (urlParams.get('success') === 'instagram_connected') {
+                updateStatus('instagram-status', 
+                    `✅ Instagram account connected successfully! Username: ${urlParams.get('username') || 'N/A'}`, 'success');
+            }
+            
+            if (urlParams.get('error')) {
+                const error = urlParams.get('error');
+                const details = urlParams.get('details');
+                const platform = error.includes('facebook') ? 'facebook' : 'instagram';
+                
+                updateStatus(`${platform}-status`, 
+                    `❌ Connection failed: ${error}<br>
+                    ${details ? `<small>Details: ${decodeURIComponent(details)}</small>` : ''}`, 'error');
+            }
+            
+            // Update callback URLs with current domain
+            const currentDomain = window.location.origin;
+            document.getElementById('callback-urls').textContent = 
+                `${currentDomain}/api/social/facebook/callback\n${currentDomain}/api/social/instagram/callback\n\nFor production:\nhttps://your-domain.com/api/social/facebook/callback\nhttps://your-domain.com/api/social/instagram/callback`;
+        };
+    </script>
+</body>
+</html>

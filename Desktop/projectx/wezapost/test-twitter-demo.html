@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐦 Test Twitter Connection (Demo Mode)</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .demo-section {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .real-oauth-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #1da1f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1991db; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .demo-btn { background: #3b82f6; }
+        .demo-btn:hover { background: #2563eb; }
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .status.success { background: #dcfce7; color: #16a34a; }
+        .status.demo { background: #dbeafe; color: #2563eb; }
+        .status.error { background: #fecaca; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐦 Test Twitter Connection</h1>
+        <p>Test your Twitter integration - both demo mode and real OAuth (if configured).</p>
+
+        <div class="demo-section">
+            <h3>💫 Option 1: Test Demo Mode (Works Right Now)</h3>
+            <p>You can test the Twitter functionality immediately with demo mode:</p>
+            <ol>
+                <li>Go to your WezaPost dashboard</li>
+                <li>Click "Connect" on Twitter</li>
+                <li>It will create a demo Twitter connection</li>
+                <li>Test creating and "posting" content (simulated)</li>
+            </ol>
+            
+            <button class="demo-btn" onclick="window.open('http://localhost:3001/dashboard', '_blank')">
+                🚀 Test Demo Mode Now
+            </button>
+            
+            <div class="status demo">
+                ✨ Demo Mode: Works without any setup - perfect for testing the interface!
+            </div>
+        </div>
+
+        <div class="real-oauth-section">
+            <h3>🔗 Option 2: Real Twitter OAuth (New User-Friendly Setup!)</h3>
+            <p>🎉 <strong>NEW:</strong> No more editing .env files! Set up your Twitter OAuth through the UI:</p>
+            
+            <button onclick="checkRealOAuth()">🔍 Check Real OAuth Status</button>
+            <div id="oauthStatus" class="status" style="display: none;"></div>
+            
+            <h4>📋 Super Easy Setup Process:</h4>
+            <ol>
+                <li>✅ Go to your WezaPost dashboard</li>
+                <li>✅ Click "Connect" on Twitter (will show setup wizard if not configured)</li>
+                <li>✅ Follow the step-by-step setup wizard</li>
+                <li>✅ Enter your Twitter app credentials in the secure form</li>
+                <li>✅ Done! No file editing required!</li>
+            </ol>
+            
+            <h4>📋 What You Still Need:</h4>
+            <ul>
+                <li>✅ Twitter Developer Account (free, but requires approval)</li>
+                <li>✅ Twitter App with OAuth 2.0 configured</li>
+                <li>✅ Your app's Client ID and Client Secret</li>
+            </ul>
+            
+            <button onclick="window.open('https://developer.twitter.com/en/portal/dashboard', '_blank')">
+                🔗 Get Twitter Developer Access
+            </button>
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                🚀 Try New Setup Wizard
+            </button>
+        </div>
+
+        <div class="demo-section">
+            <h3>🎯 What You Can Test Right Now</h3>
+            <p>Even without real OAuth, you can test:</p>
+            <ul>
+                <li>✅ Twitter account connection (demo)</li>
+                <li>✅ Post creation interface</li>
+                <li>✅ Content scheduling</li>
+                <li>✅ Multiple platform management</li>
+                <li>✅ Publishing simulation</li>
+            </ul>
+            
+            <p><strong>Demo posts won't actually go to Twitter</strong>, but you can see exactly how the real posting would work!</p>
+        </div>
+
+        <div class="real-oauth-section">
+            <h3>🎉 Quick Test Scenarios</h3>
+            
+            <h4>Scenario 1: Demo Mode Test</h4>
+            <ol>
+                <li>Go to dashboard</li>
+                <li>Connect demo Twitter account</li>
+                <li>Write: "Testing WezaPost Twitter integration! 🐦"</li>
+                <li>Click "Publish Now"</li>
+                <li>See publishing simulation</li>
+            </ol>
+            
+            <h4>Scenario 2: Real OAuth Test (If Configured)</h4>
+            <ol>
+                <li>Go to dashboard</li>
+                <li>Click "Connect" on Twitter</li>
+                <li>Authorize with real Twitter</li>
+                <li>Post real tweet to your account</li>
+                <li>See it appear on Twitter.com!</li>
+            </ol>
+        </div>
+
+        <div class="status demo">
+            💡 <strong>Tip:</strong> Start with demo mode to test the interface, then set up real OAuth when you're ready to post actual tweets!
+        </div>
+    </div>
+
+    <script>
+        async function checkRealOAuth() {
+            const status = document.getElementById('oauthStatus');
+            status.style.display = 'block';
+            status.innerHTML = 'Checking Twitter OAuth configuration...';
+            status.className = 'status demo';
+            
+            try {
+                // Check if we're authenticated first
+                const sessionResponse = await fetch('/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                if (!session || !session.user) {
+                    status.innerHTML = '❌ Not authenticated. Please sign in with Google first.';
+                    status.className = 'status error';
+                    return;
+                }
+                
+                // Test the Twitter OAuth endpoint
+                const response = await fetch('/api/social/twitter/connect');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    status.innerHTML = `✅ <strong>Real Twitter OAuth is configured!</strong><br>
+                        • You can connect your actual Twitter account<br>
+                        • Posts will go to your real Twitter profile<br>
+                        • Ready for live posting!`;
+                    status.className = 'status success';
+                } else if (data.error === 'Twitter OAuth not configured') {
+                    status.innerHTML = `⚠️ <strong>Twitter OAuth not configured</strong><br>
+                        • Currently using demo mode<br>
+                        • ${data.message}<br>
+                        • Posts will be simulated, not real`;
+                    status.className = 'status demo';
+                } else {
+                    status.innerHTML = `❌ <strong>Configuration error:</strong> ${data.error}`;
+                    status.className = 'status error';
+                }
+            } catch (error) {
+                status.innerHTML = `❌ <strong>Connection failed</strong><br>
+                    Make sure your server is running on http://localhost:3001`;
+                status.className = 'status error';
+            }
+        }
+
+        // Show helpful info on load
+        window.onload = () => {
+            setTimeout(() => {
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'status success';
+                welcomeMsg.innerHTML = '🎉 <strong>Ready to test!</strong> You can test Twitter functionality right now in demo mode, or set up real OAuth for actual posting.';
+                document.querySelector('.container').insertBefore(welcomeMsg, document.querySelector('.demo-section'));
+            }, 500);
+        };
+    </script>
+</body>
+</html>

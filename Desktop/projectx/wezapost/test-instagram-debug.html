@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Instagram Permissions</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+        }
+        button { 
+            background: #e4405f; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        button:hover { background: #d6336c; }
+        .result { 
+            margin-top: 10px; 
+            padding: 10px; 
+            background: #f0f0f0; 
+            border-radius: 3px; 
+            white-space: pre-wrap; 
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .error { background: #ffebee; border-left: 4px solid #f44336; }
+        .success { background: #e8f5e8; border-left: 4px solid #4caf50; }
+        .info { background: #e3f2fd; border-left: 4px solid #2196f3; }
+        input { 
+            width: 100%; 
+            padding: 8px; 
+            margin: 5px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 3px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug Instagram Permissions</h1>
+    
+    <div class="test-section">
+        <h3>Configuration</h3>
+        <label>Instagram Access Token:</label>
+        <input type="text" id="access-token" placeholder="Paste your Instagram access token here" />
+        
+        <label>Facebook Page ID:</label>
+        <input type="text" id="page-id" value="302623692926333" placeholder="Facebook Page ID (e.g., 302623692926333)" />
+        
+        <p><small>Your Instagram access token should start with "EAAc..." and be associated with your Facebook page.</small></p>
+    </div>
+
+    <div class="test-section">
+        <h3>1. Debug Instagram Account Connection</h3>
+        <button onclick="debugInstagramPermissions()">Debug Instagram Permissions</button>
+        <div id="debug-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Test Instagram Posting (Real)</h3>
+        <input type="text" id="test-content" placeholder="Enter test post content" value="Test Instagram post from debugging! 📸" />
+        <input type="text" id="test-image" placeholder="Image URL" value="https://via.placeholder.com/1080x1080/E4405F/FFFFFF?text=Instagram+Test" />
+        <button onclick="testInstagramPost()">Test Real Instagram Post</button>
+        <div id="post-result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        async function debugInstagramPermissions() {
+            const token = document.getElementById('access-token').value;
+            const pageId = document.getElementById('page-id').value;
+            const resultDiv = document.getElementById('debug-result');
+            
+            if (!token || !pageId) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Please enter both access token and page ID';
+                return;
+            }
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'Debugging Instagram permissions...';
+            
+            try {
+                const response = await fetch(`/api/debug-instagram-permissions?token=${encodeURIComponent(token)}&pageId=${pageId}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `Debug Results:\n${JSON.stringify(data, null, 2)}`;
+                    
+                    // Show diagnosis
+                    if (data.diagnosis) {
+                        const diagnosis = data.diagnosis;
+                        let diagnosisText = "\n\n=== DIAGNOSIS ===\n";
+                        diagnosisText += `✅ Has Instagram Account: ${diagnosis.hasInstagramAccount}\n`;
+                        diagnosisText += `✅ Can Access Instagram Details: ${diagnosis.canAccessInstagramDetails}\n`;
+                        diagnosisText += `✅ Can Create Media Containers: ${diagnosis.canCreateMediaContainers}\n`;
+                        diagnosisText += `🎯 Ready for Posting: ${diagnosis.readyForPosting}\n`;
+                        
+                        if (data.instagramAccountDetails) {
+                            diagnosisText += `\nInstagram Account: @${data.instagramAccountDetails.username}\n`;
+                            diagnosisText += `Followers: ${data.instagramAccountDetails.followers_count}\n`;
+                        }
+                        
+                        if (data.mediaTestError) {
+                            diagnosisText += `\n❌ Media Creation Error: ${data.mediaTestError}\n`;
+                        }
+                        
+                        resultDiv.textContent += diagnosisText;
+                    }
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `Error: ${data.error}\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Network Error: ${error.message}`;
+            }
+        }
+
+        async function testInstagramPost() {
+            const token = document.getElementById('access-token').value;
+            const content = document.getElementById('test-content').value;
+            const imageUrl = document.getElementById('test-image').value;
+            const resultDiv = document.getElementById('post-result');
+            
+            if (!token || !content || !imageUrl) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Please fill in all fields';
+                return;
+            }
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'Testing Instagram post...';
+            
+            try {
+                // First, get Instagram account details from our debug endpoint
+                const pageId = document.getElementById('page-id').value;
+                const debugResponse = await fetch(`/api/debug-instagram-permissions?token=${encodeURIComponent(token)}&pageId=${pageId}`);
+                const debugData = await debugResponse.json();
+                
+                if (!debugData.instagramBusinessAccount) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = 'No Instagram Business Account found. Please connect Instagram to your Facebook page.';
+                    return;
+                }
+                
+                // Now test actual posting
+                const postResponse = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'post',
+                        account: {
+                            access_token: token,
+                            facebook_page_id: pageId,
+                            platform: 'instagram',
+                            username: debugData.instagramAccountDetails?.username || 'Instagram Account'
+                        },
+                        content: content,
+                        mediaUrls: [imageUrl]
+                    })
+                });
+                
+                const postData = await postResponse.json();
+                
+                if (postData.success && !postData.simulated) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `🎉 SUCCESS! Instagram post created:\nPost ID: ${postData.postId}\nURL: ${postData.url}\n\n${JSON.stringify(postData, null, 2)}`;
+                } else if (postData.simulated) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `⚠️ SIMULATED (not real): ${postData.note}\n\n${JSON.stringify(postData, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ FAILED: ${postData.error}\n\n${JSON.stringify(postData, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Network Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

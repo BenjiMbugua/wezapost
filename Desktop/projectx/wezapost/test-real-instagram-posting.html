@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Instagram Posting Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step { 
+            border: 1px solid #ddd; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            background: #f9f9f9;
+        }
+        .step h3 { 
+            color: #2563eb; 
+            margin-top: 0; 
+        }
+        button { 
+            background: #22c55e; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 14px;
+            font-weight: 600;
+        }
+        button:hover { background: #16a34a; }
+        button:disabled { 
+            background: #9ca3af; 
+            cursor: not-allowed; 
+        }
+        .danger { background: #dc2626; }
+        .danger:hover { background: #b91c1c; }
+        textarea { 
+            width: 100%; 
+            height: 120px; 
+            margin: 10px 0; 
+            padding: 12px; 
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        input[type="url"] { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0; 
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+        .result { 
+            margin: 15px 0; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .success { background: #dcfce7; border: 1px solid #22c55e; color: #15803d; }
+        .error { background: #fef2f2; border: 1px solid #ef4444; color: #dc2626; }
+        .info { background: #dbeafe; border: 1px solid #3b82f6; color: #1d4ed8; }
+        .warning { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+        .post-form {
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-ready { background: #dcfce7; color: #15803d; }
+        .status-error { background: #fef2f2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Real Instagram Posting Test</h1>
+        <p>This page will help you test posting to your real Instagram account instead of simulation.</p>
+        
+        <div class="step">
+            <h3>Step 1: Check Connection Status</h3>
+            <p>First, let's verify your Instagram account connection:</p>
+            <button onclick="checkInstagramStatus()">Check Instagram Connection</button>
+            <div id="status-results"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Create Test Post</h3>
+            <div class="post-form">
+                <label><strong>Post Content:</strong></label>
+                <textarea id="post-content" placeholder="Enter your Instagram post content...">🎉 Testing real Instagram posting from Wezapost! 
+
+This post is being made through the Instagram Content Publishing API via Facebook Graph API v18.0.
+
+✨ Features:
+• Real OAuth authentication
+• Supabase database integration  
+• Professional posting workflow
+
+#wezapost #socialmedia #automation #instagram #realposting #test</textarea>
+                
+                <label><strong>Image URL (required for Instagram):</strong></label>
+                <input type="url" id="image-url" placeholder="https://example.com/image.jpg" 
+                       value="https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=1000&h=1000&fit=crop&crop=entropy&auto=format&fm=jpg&q=80">
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    ℹ️ Instagram requires at least one image or video. Default is a high-quality tech image from Unsplash.
+                </small>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Test Real Posting</h3>
+            <p><strong>⚠️ Warning:</strong> This will make a REAL post to your Instagram account!</p>
+            <button class="danger" onclick="testRealInstagramPost()" id="post-btn">
+                🧪 POST TO REAL INSTAGRAM
+            </button>
+            <div id="posting-results"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Verify in App</h3>
+            <p>After posting, check the main app to see if it shows as a real post (not simulated):</p>
+            <a href="/dashboard" target="_blank">
+                <button>Open Dashboard</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function showResult(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const timestamp = new Date().toLocaleTimeString();
+            container.innerHTML += `<div class="result ${type}"><strong>[${timestamp}]</strong> ${message}</div>`;
+        }
+
+        async function checkInstagramStatus() {
+            showResult('status-results', 'Checking Instagram connection status...', 'info');
+            
+            try {
+                // Check if user is authenticated
+                const sessionResponse = await fetch('/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                if (!session?.user?.id) {
+                    showResult('status-results', '❌ Not authenticated. Please login first.', 'error');
+                    return;
+                }
+
+                showResult('status-results', `✅ Authenticated as: ${session.user.name || session.user.email}`, 'success');
+
+                // Check Instagram accounts in database
+                const dbResponse = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_database' })
+                });
+
+                const dbResult = await dbResponse.json();
+                
+                if (dbResult.success && dbResult.accounts.length > 0) {
+                    showResult('status-results', `✅ Database: Found ${dbResult.accounts.length} Instagram accounts`, 'success');
+                    dbResult.accounts.forEach((account, index) => {
+                        showResult('status-results', `📱 Account ${index + 1}: @${account.username} (${account.display_name}) - Active: ${account.is_active}`, 'info');
+                    });
+                } else {
+                    showResult('status-results', '⚠️ Database: No Instagram accounts found', 'warning');
+                }
+
+                // Test connection via SocialProviderManager
+                const connResponse = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test_connection' })
+                });
+
+                const connResult = await connResponse.json();
+                
+                if (connResult.success) {
+                    showResult('status-results', `✅ Connection Test: ${connResult.message}`, 'success');
+                    connResult.accounts.forEach((account, index) => {
+                        const realStatus = (account.username === 'Wezalabstech' || 
+                                          account.username === 'Wezalabs Wezalabs' || 
+                                          account.id.includes('real')) ? 'REAL' : 'DEMO';
+                        showResult('status-results', `📱 Ready to post: @${account.username} (${realStatus} account)`, realStatus === 'REAL' ? 'success' : 'warning');
+                    });
+                } else {
+                    showResult('status-results', `❌ Connection Test Failed: ${connResult.error}`, 'error');
+                }
+
+            } catch (error) {
+                showResult('status-results', `❌ Status check failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testRealInstagramPost() {
+            const content = document.getElementById('post-content').value.trim();
+            const imageUrl = document.getElementById('image-url').value.trim();
+            const postBtn = document.getElementById('post-btn');
+
+            if (!content) {
+                showResult('posting-results', '❌ Please enter post content', 'error');
+                return;
+            }
+
+            if (!imageUrl) {
+                showResult('posting-results', '❌ Please enter an image URL', 'error');
+                return;
+            }
+
+            const confirmed = confirm('⚠️ REAL POSTING WARNING\\n\\nThis will create a REAL post on your Instagram account!\\n\\nPost content:\\n' + content.substring(0, 100) + '...\\n\\nAre you sure you want to continue?');
+            
+            if (!confirmed) {
+                showResult('posting-results', '✋ Posting cancelled by user', 'warning');
+                return;
+            }
+
+            postBtn.disabled = true;
+            postBtn.textContent = '📤 POSTING TO INSTAGRAM...';
+            
+            showResult('posting-results', '📤 Initiating real Instagram posting...', 'info');
+
+            try {
+                // Get session to ensure we're authenticated
+                const sessionResponse = await fetch('/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                if (!session?.user?.id) {
+                    throw new Error('Authentication required');
+                }
+
+                // Get Instagram account info first
+                const accountResponse = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test_connection' })
+                });
+
+                const accountResult = await accountResponse.json();
+                
+                if (!accountResult.success || !accountResult.accounts.length) {
+                    throw new Error('No Instagram accounts available for posting');
+                }
+
+                const instagramAccount = accountResult.accounts.find(acc => acc.platform === 'instagram');
+                showResult('posting-results', `📱 Using account: @${instagramAccount.username}`, 'info');
+
+                // Make the actual posting request
+                const postResponse = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'post',
+                        account: instagramAccount,
+                        content: content,
+                        mediaUrls: [imageUrl]
+                    })
+                });
+
+                const result = await postResponse.json();
+                
+                if (result.success) {
+                    showResult('posting-results', `🎉 POSTING SUCCESSFUL!\\n\\n✅ Post ID: ${result.postId}\\n📅 Published: ${result.publishedAt}\\n🔗 URL: ${result.url || 'N/A'}`, 'success');
+                    showResult('posting-results', '✅ Real Instagram posting is working correctly!', 'success');
+                } else {
+                    showResult('posting-results', `❌ POSTING FAILED:\\n\\nError: ${result.error}\\n\\nDetails: ${JSON.stringify(result.details, null, 2)}`, 'error');
+                }
+
+            } catch (error) {
+                showResult('posting-results', `❌ Posting error: ${error.message}`, 'error');
+            } finally {
+                postBtn.disabled = false;
+                postBtn.textContent = '🧪 POST TO REAL INSTAGRAM';
+            }
+        }
+
+        // Auto-check status on page load
+        window.onload = () => {
+            setTimeout(checkInstagramStatus, 1000);
+        };
+    </script>
+</body>
+</html>

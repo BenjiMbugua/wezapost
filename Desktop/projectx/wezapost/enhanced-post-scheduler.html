@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>⏰ Schedule & Enhance "The Age Resolve" Post</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .schedule-section {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .enhance-section {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .post-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #2563eb; }
+        .schedule-btn { background: #0ea5e9; }
+        .schedule-btn:hover { background: #0284c7; }
+        .enhance-btn { background: #f59e0b; }
+        .enhance-btn:hover { background: #d97706; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .post-preview {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .post-preview:hover {
+            border-color: #3b82f6;
+            background: #f1f5f9;
+        }
+        .tweet-text {
+            font-size: 15px;
+            line-height: 1.4;
+            color: #0f1419;
+        }
+        .char-count {
+            font-size: 12px;
+            color: #536471;
+            margin-top: 8px;
+        }
+        .time-option {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .time-option:hover {
+            border-color: #3b82f6;
+            background: #e0f2fe;
+        }
+        .current-time {
+            font-family: monospace;
+            font-size: 14px;
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⏰ Schedule & Enhance "The Age Resolve" Post</h1>
+        <p>Let's schedule your post and add some creative enhancements!</p>
+
+        <div class="schedule-section">
+            <h3>⏰ Post Scheduling Options</h3>
+            <p>Current time: <span class="current-time" id="currentTime"></span></p>
+            
+            <h4>📅 Recommended Scheduling Times:</h4>
+            
+            <div class="time-option" onclick="copyTimeData('5 minutes', 5)">
+                <strong>🚀 Test Schedule (5 minutes)</strong><br>
+                <span id="time5min"></span><br>
+                <small>Perfect for testing the scheduling system</small>
+            </div>
+            
+            <div class="time-option" onclick="copyTimeData('1 hour', 60)">
+                <strong>📍 1 Hour Later</strong><br>
+                <span id="time1hour"></span><br>
+                <small>Good for same-day posting</small>
+            </div>
+            
+            <div class="time-option" onclick="copyTimeData('tomorrow morning', 'tomorrow')">
+                <strong>🌅 Tomorrow Morning (9:00 AM)</strong><br>
+                <span id="tomorrowMorning"></span><br>
+                <small>Optimal engagement time</small>
+            </div>
+            
+            <div class="time-option" onclick="copyTimeData('peak time', 'peak')">
+                <strong>📈 Peak Engagement Time</strong><br>
+                <span id="peakTime"></span><br>
+                <small>Wednesday 3:00 PM (highest Twitter engagement)</small>
+            </div>
+
+            <h4>📋 How to Schedule in WezaPost:</h4>
+            <ol>
+                <li>In the "Create Post" section, select <strong>"Schedule for Later"</strong></li>
+                <li>Click the <strong>Date</strong> field and select your date</li>
+                <li>Click the <strong>Time</strong> field and enter your time</li>
+                <li>Click <strong>"Schedule Post"</strong> instead of "Publish Now"</li>
+            </ol>
+        </div>
+
+        <div class="enhance-section">
+            <h3>✨ Enhanced Post Versions</h3>
+            <p>Choose from these enhanced versions of "the age resolve":</p>
+            
+            <h4>🎭 Minimalist Versions:</h4>
+            
+            <div class="post-preview" onclick="copyToClipboard('the age resolve')">
+                <div class="tweet-text">the age resolve</div>
+                <div class="char-count">14/280 characters • Original</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('the age resolve.')">
+                <div class="tweet-text">the age resolve.</div>
+                <div class="char-count">15/280 characters • With period</div>
+            </div>
+
+            <h4>🕰️ Time-Themed Versions:</h4>
+            
+            <div class="post-preview" onclick="copyToClipboard('🕰️ the age resolve')">
+                <div class="tweet-text">🕰️ the age resolve</div>
+                <div class="char-count">17/280 characters • Clock emoji</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('⏳ the age resolve ⌛')">
+                <div class="tweet-text">⏳ the age resolve ⌛</div>
+                <div class="char-count">20/280 characters • Time symbols</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('🌅 the age resolve 🌇')">
+                <div class="tweet-text">🌅 the age resolve 🌇</div>
+                <div class="char-count">20/280 characters • Dawn to dusk</div>
+            </div>
+
+            <h4>💭 Philosophical Versions:</h4>
+            
+            <div class="post-preview" onclick="copyToClipboard('the age resolve\n\n#philosophy #time #reflection')">
+                <div class="tweet-text">the age resolve<br><br>#philosophy #time #reflection</div>
+                <div class="char-count">50/280 characters • With hashtags</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('💭 the age resolve\n\n#thoughts #wisdom #perspective')">
+                <div class="tweet-text">💭 the age resolve<br><br>#thoughts #wisdom #perspective</div>
+                <div class="char-count">54/280 characters • Thought bubble</div>
+            </div>
+
+            <h4>🎯 Engagement Versions:</h4>
+            
+            <div class="post-preview" onclick="copyToClipboard('the age resolve\n\nWhat does this mean to you? 🤔')">
+                <div class="tweet-text">the age resolve<br><br>What does this mean to you? 🤔</div>
+                <div class="char-count">46/280 characters • Question format</div>
+            </div>
+
+            <div class="post-preview" onclick="copyToClipboard('✨ the age resolve ✨\n\n#MondayMotivation #Wisdom')">
+                <div class="tweet-text">✨ the age resolve ✨<br><br>#MondayMotivation #Wisdom</div>
+                <div class="char-count">44/280 characters • Motivational</div>
+            </div>
+        </div>
+
+        <div class="post-section">
+            <h3>🚀 Create Your Scheduled Post</h3>
+            
+            <h4>Step-by-Step Process:</h4>
+            <ol>
+                <li><strong>Open Dashboard:</strong> 
+                    <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                        📱 Open WezaPost
+                    </button>
+                </li>
+                <li><strong>Connect Twitter:</strong> Use demo mode for testing</li>
+                <li><strong>Go to Create Post:</strong> Find the post creation section</li>
+                <li><strong>Add Content:</strong> Click any enhanced version above to copy</li>
+                <li><strong>Select "Schedule for Later":</strong> Radio button option</li>
+                <li><strong>Set Date & Time:</strong> Use the times suggested above</li>
+                <li><strong>Click "Schedule Post":</strong> Your post will be queued!</li>
+            </ol>
+
+            <h4>🎯 Recommended Combination:</h4>
+            <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #22c55e;">
+                <strong>Content:</strong> <code>💭 the age resolve</code><br>
+                <strong>Schedule:</strong> Tomorrow morning 9:00 AM<br>
+                <strong>Why:</strong> Philosophical content + optimal engagement time
+            </div>
+        </div>
+
+        <div style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 1px solid #3b82f6; margin-top: 20px;">
+            <h3>🎉 What Happens After Scheduling?</h3>
+            <ul>
+                <li>✅ Post appears in "Recent Posts" with "scheduled" status</li>
+                <li>⏰ Redis queue system handles the timing</li>
+                <li>🚀 Post automatically publishes at scheduled time</li>
+                <li>📊 Status updates to "published" when complete</li>
+                <li>📱 You can view/edit scheduled posts in dashboard</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateTimes() {
+            const now = new Date();
+            
+            // Current time
+            document.getElementById('currentTime').textContent = now.toLocaleString();
+            
+            // 5 minutes from now
+            const in5min = new Date(now.getTime() + 5 * 60000);
+            document.getElementById('time5min').textContent = in5min.toLocaleString();
+            
+            // 1 hour from now
+            const in1hour = new Date(now.getTime() + 60 * 60000);
+            document.getElementById('time1hour').textContent = in1hour.toLocaleString();
+            
+            // Tomorrow 9 AM
+            const tomorrow9am = new Date(now);
+            tomorrow9am.setDate(tomorrow9am.getDate() + 1);
+            tomorrow9am.setHours(9, 0, 0, 0);
+            document.getElementById('tomorrowMorning').textContent = tomorrow9am.toLocaleString();
+            
+            // Next Wednesday 3 PM (peak time)
+            const nextWed = new Date(now);
+            const daysToAdd = (3 - now.getDay() + 7) % 7 || 7; // 3 = Wednesday
+            nextWed.setDate(now.getDate() + daysToAdd);
+            nextWed.setHours(15, 0, 0, 0);
+            document.getElementById('peakTime').textContent = nextWed.toLocaleString();
+        }
+
+        function copyTimeData(description, type) {
+            const now = new Date();
+            let targetTime;
+            
+            switch(type) {
+                case 5:
+                    targetTime = new Date(now.getTime() + 5 * 60000);
+                    break;
+                case 60:
+                    targetTime = new Date(now.getTime() + 60 * 60000);
+                    break;
+                case 'tomorrow':
+                    targetTime = new Date(now);
+                    targetTime.setDate(targetTime.getDate() + 1);
+                    targetTime.setHours(9, 0, 0, 0);
+                    break;
+                case 'peak':
+                    targetTime = new Date(now);
+                    const daysToAdd = (3 - now.getDay() + 7) % 7 || 7;
+                    targetTime.setDate(now.getDate() + daysToAdd);
+                    targetTime.setHours(15, 0, 0, 0);
+                    break;
+            }
+            
+            const dateStr = targetTime.toISOString().split('T')[0];
+            const timeStr = targetTime.toTimeString().split(' ')[0].substring(0, 5);
+            
+            const scheduleInfo = `${description.toUpperCase()} SCHEDULE INFO:
+Date: ${dateStr}
+Time: ${timeStr}
+Full DateTime: ${targetTime.toLocaleString()}
+
+For WezaPost:
+1. Select "Schedule for Later"
+2. Date field: ${dateStr}
+3. Time field: ${timeStr}`;
+            
+            navigator.clipboard.writeText(scheduleInfo);
+            
+            // Visual feedback
+            event.target.style.backgroundColor = '#dcfce7';
+            event.target.style.borderColor = '#22c55e';
+            
+            setTimeout(() => {
+                event.target.style.backgroundColor = '#f1f5f9';
+                event.target.style.borderColor = '#cbd5e1';
+            }, 1000);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            
+            // Visual feedback
+            event.target.closest('.post-preview').style.backgroundColor = '#dcfce7';
+            event.target.closest('.post-preview').style.borderColor = '#22c55e';
+            
+            setTimeout(() => {
+                event.target.closest('.post-preview').style.backgroundColor = '#f8fafc';
+                event.target.closest('.post-preview').style.borderColor = '#e2e8f0';
+            }, 1000);
+        }
+
+        // Update times every minute
+        updateTimes();
+        setInterval(updateTimes, 60000);
+    </script>
+</body>
+</html>

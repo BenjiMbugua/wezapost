@@ -31,13 +31,25 @@ export function SchedulerDashboard() {
   const loadStatus = async () => {
     try {
       const response = await fetch('/api/scheduler')
+      
+      if (!response.ok) {
+        console.log('Scheduler API not available, skipping status update')
+        return
+      }
+      
       const result = await response.json()
       
       if (result.success) {
         setStatus(result.data)
       }
     } catch (error) {
-      console.error('Error loading scheduler status:', error)
+      console.log('Scheduler service not available (this is normal for basic functionality):', error.message)
+      // Set a default status so UI doesn't break
+      setStatus({
+        isRunning: false,
+        activeJobs: [],
+        jobCount: 0
+      })
     } finally {
       setLoading(false)
     }

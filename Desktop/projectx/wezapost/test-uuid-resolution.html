@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test UUID Resolution</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result { 
+            margin: 15px 0; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; border: 1px solid #22c55e; }
+        .info { background: #dbeafe; border: 1px solid #3b82f6; }
+        .error { background: #fef2f2; border: 1px solid #ef4444; }
+        .warning { background: #fef3c7; border: 1px solid #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test UUID Resolution</h1>
+        <p>Testing why the user ID is not being converted to UUID format for Supabase operations.</p>
+        
+        <button onclick="testUUIDResolution()">Test UUID Resolution</button>
+        <button onclick="fixUUID()" style="background: #10b981;">Fix UUID Issue</button>
+        <button onclick="window.location.reload()" style="background: #6b7280;">Refresh Page</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function showResult(message, type) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            resultsDiv.innerHTML += `<div class="result ${type}">[${timestamp}] ${message}</div>`;
+        }
+
+        async function testUUIDResolution() {
+            showResult('Testing UUID resolution process...', 'info');
+            
+            try {
+                const response = await fetch('/api/debug-user-uuid');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const isUUID = result.session_info.is_uuid_format;
+                    const resultType = isUUID ? 'success' : 'error';
+                    
+                    showResult(`🔍 UUID Resolution Test Results:
+
+SESSION INFO:
+- Current User ID: ${result.session_info.user_id}
+- Email: ${result.session_info.email}
+- Name: ${result.session_info.name}
+- User ID Type: ${result.session_info.user_id_type}
+- User ID Length: ${result.session_info.user_id_length}
+- Is UUID Format: ${result.session_info.is_uuid_format ? '✅ YES' : '❌ NO'}
+
+PROFILE LOOKUP:
+- Profile Found: ${result.profile_lookup.found ? '✅ YES' : '❌ NO'}
+- Profile Data: ${result.profile_lookup.profile ? JSON.stringify(result.profile_lookup.profile, null, 2) : 'None'}
+- Lookup Error: ${result.profile_lookup.error || 'None'}
+
+PROFILES TABLE SAMPLE:
+- Total Profiles Found: ${result.all_profiles_sample.count}
+- Sample Profiles: ${JSON.stringify(result.all_profiles_sample.profiles, null, 2)}
+- Query Error: ${result.all_profiles_sample.error || 'None'}
+
+ANALYSIS:
+${result.recommendations}
+
+ROOT CAUSE:
+${isUUID 
+    ? '✅ User ID is already in UUID format - issue might be elsewhere' 
+    : '❌ User ID is still OAuth format - UUID lookup/creation is failing'
+}
+
+NEXT STEPS:
+${isUUID 
+    ? 'User ID is correct. Check if social accounts table exists and has proper RLS policies.'
+    : result.profile_lookup.found 
+        ? 'Profile exists but UUID mapping failed - check session callback logic'
+        : 'No profile found - user needs to sign out and sign back in to create profile'
+}`, resultType);
+                } else {
+                    showResult(`❌ Test failed: ${result.error}\nDetails: ${result.details}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Test error: ${error.message}`, 'error');
+            }
+        }
+
+        async function fixUUID() {
+            showResult('Attempting to fix UUID issue...', 'info');
+            
+            try {
+                const response = await fetch('/api/fix-user-uuid', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(`✅ UUID Fix Result:
+
+Success: ${result.success}
+Message: ${result.message}
+Profile ID: ${result.profile_id}
+Action: ${result.action}
+
+${result.next_step || ''}
+
+✅ You should now be able to use real Facebook and Instagram posting!
+
+NEXT STEPS:
+1. Refresh this page to verify UUID is now correct
+2. Try posting to Facebook or Instagram - should now be REAL instead of simulated`, 'success');
+                } else {
+                    showResult(`❌ UUID Fix Failed:
+
+Error: ${result.error}
+Details: ${result.details}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Fix error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-start test
+        window.onload = () => {
+            setTimeout(testUUIDResolution, 500);
+        };
+    </script>
+</body>
+</html>

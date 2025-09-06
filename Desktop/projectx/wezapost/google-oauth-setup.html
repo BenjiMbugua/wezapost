@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google OAuth Setup Assistant</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f8fafc; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .step {
+            background: #f1f5f9;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+        .copy-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover { background: #2563eb; }
+        .success { color: #059669; font-weight: bold; }
+        .warning { color: #d97706; font-weight: bold; }
+        .error { color: #dc2626; font-weight: bold; }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #2563eb; }
+        .nav { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 20px 0;
+        }
+        .step-indicator {
+            background: #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .step-indicator.active {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Google OAuth Setup Assistant</h1>
+        <p>Follow these steps to connect your Google account to WezaPost for authentication.</p>
+        
+        <div class="step-indicator" id="indicator">
+            Step 1 of 5: Create Google Cloud Project
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step" id="step1">
+            <h3>Step 1: Create or Select a Google Cloud Project</h3>
+            <p>1. You should already have Google Cloud Console open</p>
+            <p>2. If you don't have a project, click <strong>"Create Project"</strong></p>
+            <p>3. Project name: <code>WezaPost</code></p>
+            <p>4. Click <strong>"Create"</strong> and wait for it to be created</p>
+            <p>5. Make sure the project is selected in the top dropdown</p>
+            
+            <div class="nav">
+                <div></div>
+                <button onclick="nextStep(2)">Next: Enable APIs →</button>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step" id="step2" style="display: none;">
+            <h3>Step 2: Enable Required APIs</h3>
+            <p>1. In the Google Cloud Console, go to <strong>"APIs & Services" → "Library"</strong></p>
+            <p>2. Search for and enable: <strong>"Google+ API"</strong></p>
+            <p>3. Search for and enable: <strong>"People API"</strong></p>
+            <p>4. These APIs allow WezaPost to get your basic profile information</p>
+            
+            <div class="nav">
+                <button onclick="prevStep(1)">← Back</button>
+                <button onclick="nextStep(3)">Next: OAuth Consent →</button>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step" id="step3" style="display: none;">
+            <h3>Step 3: Configure OAuth Consent Screen</h3>
+            <p>1. Go to <strong>"APIs & Services" → "OAuth consent screen"</strong></p>
+            <p>2. Choose <strong>"External"</strong> (unless you have a Google Workspace)</p>
+            <p>3. Fill in required fields:</p>
+            <ul>
+                <li><strong>App name:</strong> WezaPost</li>
+                <li><strong>User support email:</strong> Your email</li>
+                <li><strong>Developer contact:</strong> Your email</li>
+            </ul>
+            <p>4. Click <strong>"Save and Continue"</strong> through all steps</p>
+            
+            <div class="nav">
+                <button onclick="prevStep(2)">← Back</button>
+                <button onclick="nextStep(4)">Next: Create Credentials →</button>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step" id="step4" style="display: none;">
+            <h3>Step 4: Create OAuth Credentials</h3>
+            <p>1. Go to <strong>"APIs & Services" → "Credentials"</strong></p>
+            <p>2. Click <strong>"+ Create Credentials" → "OAuth 2.0 Client IDs"</strong></p>
+            <p>3. Application type: <strong>"Web application"</strong></p>
+            <p>4. Name: <strong>"WezaPost OAuth"</strong></p>
+            <p>5. <strong>Authorized redirect URIs:</strong> Click "Add URI" and paste this exactly:</p>
+            
+            <div class="copy-box">
+                http://localhost:3001/api/auth/callback/google
+                <button class="copy-btn" onclick="copyToClipboard('http://localhost:3001/api/auth/callback/google')">Copy</button>
+            </div>
+            
+            <p>6. Click <strong>"Create"</strong></p>
+            <p class="warning">⚠️ Make sure the redirect URI is exactly as shown above!</p>
+            
+            <div class="nav">
+                <button onclick="prevStep(3)">← Back</button>
+                <button onclick="nextStep(5)">Next: Copy Credentials →</button>
+            </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step" id="step5" style="display: none;">
+            <h3>Step 5: Copy Your Credentials</h3>
+            <p>1. After creating the OAuth client, you'll see a popup with your credentials</p>
+            <p>2. Copy the <strong>Client ID</strong> and <strong>Client Secret</strong></p>
+            <p>3. Open your <code>.env.local</code> file in WezaPost</p>
+            <p>4. Replace these lines:</p>
+            
+            <div class="copy-box">
+GOOGLE_CLIENT_ID="your_actual_google_client_id_here"
+GOOGLE_CLIENT_SECRET="your_actual_google_client_secret_here"
+                <button class="copy-btn" onclick="copyToClipboard('GOOGLE_CLIENT_ID=\"your_actual_google_client_id_here\"\nGOOGLE_CLIENT_SECRET=\"your_actual_google_client_secret_here\"')">Copy Template</button>
+            </div>
+            
+            <p>5. Save the <code>.env.local</code> file</p>
+            <p>6. Restart your development server:</p>
+            
+            <div class="copy-box">
+npm run dev
+                <button class="copy-btn" onclick="copyToClipboard('npm run dev')">Copy</button>
+            </div>
+            
+            <div class="nav">
+                <button onclick="prevStep(4)">← Back</button>
+                <button onclick="testSetup()">🚀 Test OAuth Setup</button>
+            </div>
+        </div>
+
+        <!-- Test Result -->
+        <div class="step" id="testResult" style="display: none;">
+            <h3>🎉 Setup Complete!</h3>
+            <p class="success">Your Google OAuth is now configured!</p>
+            
+            <h4>Next Steps:</h4>
+            <ol>
+                <li>Go to <a href="http://localhost:3001/auth/signin" target="_blank">WezaPost Sign In</a></li>
+                <li>Click <strong>"Continue with Google"</strong></li>
+                <li>Authorize WezaPost to access your Google account</li>
+                <li>You'll be redirected to the dashboard as an authenticated user</li>
+                <li>Now you can connect your real social media accounts!</li>
+            </ol>
+            
+            <p><strong>Want to add more providers?</strong> Check the <code>OAUTH_SETUP_GUIDE.md</code> for Twitter, LinkedIn, and Facebook setup.</p>
+            
+            <button onclick="window.open('http://localhost:3001/auth/signin', '_blank')">🚀 Test Login Now</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function nextStep(step) {
+            document.getElementById(`step${currentStep}`).style.display = 'none';
+            document.getElementById(`step${step}`).style.display = 'block';
+            currentStep = step;
+            updateIndicator();
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}`).style.display = 'none';
+            document.getElementById(`step${step}`).style.display = 'block';
+            currentStep = step;
+            updateIndicator();
+        }
+
+        function updateIndicator() {
+            const indicator = document.getElementById('indicator');
+            const steps = [
+                'Step 1 of 5: Create Google Cloud Project',
+                'Step 2 of 5: Enable Required APIs',
+                'Step 3 of 5: Configure OAuth Consent Screen',
+                'Step 4 of 5: Create OAuth Credentials',
+                'Step 5 of 5: Copy Your Credentials'
+            ];
+            
+            if (currentStep <= 5) {
+                indicator.textContent = steps[currentStep - 1];
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        function testSetup() {
+            document.getElementById(`step${currentStep}`).style.display = 'none';
+            document.getElementById('testResult').style.display = 'block';
+            document.getElementById('indicator').textContent = '✅ Setup Complete!';
+            document.getElementById('indicator').className = 'step-indicator active';
+        }
+    </script>
+</body>
+</html>

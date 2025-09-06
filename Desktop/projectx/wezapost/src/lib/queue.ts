@@ -1,5 +1,7 @@
 import Bull, { Job, Queue } from 'bull'
 import { getRedisClient } from './redis'
+import { socialPostingService } from './social-posting-service'
+import { databasePostingService } from './database-posting-service'
 
 // Queue configuration
 const REDIS_CONFIG = {
@@ -83,29 +85,56 @@ export const getRecurringQueue = (): Queue<RecurringPostJobData> => {
 const processPostJob = async (data: PostJobData): Promise<{ success: boolean; results: any[] }> => {
   console.log(`Processing post job for post ${data.postId} on platforms:`, data.platforms)
   
-  const results = []
-  
-  // TODO: Implement actual social media posting logic
-  for (const platform of data.platforms) {
+  try {
+    // Use real social posting service
+    const results = await socialPostingService.postToPlatforms(
+      data.userId,
+      data.platforms,
+      data.content,
+      data.media
+    )
+    
+    console.log('Real posting results:', results)
+    
+    // Save results to database
+    const dbUpdateSuccess = await databasePostingService.updatePostResults(
+      data.postId,
+      data.userId,
+      results
+    )
+    
+    if (dbUpdateSuccess) {
+      console.log(`✅ Successfully saved posting results to database for post ${data.postId}`)
+    } else {
+      console.error(`❌ Failed to save posting results to database for post ${data.postId}`)
+    }
+    
+    // Log individual platform results
+    for (const result of results) {
+      if (result.success) {
+        console.log(`✅ Successfully posted to ${result.platform}:`, result.postId)
+      } else {
+        console.error(`❌ Failed to post to ${result.platform}:`, result.error)
+      }
+    }
+    
+    return { success: true, results }
+  } catch (error) {
+    console.error('Error in processPostJob:', error)
+    
+    // Try to update database with error status
     try {
-      // Mock posting - replace with actual API calls
-      const result = await mockPostToPlatform(platform, data.content, data.media)
-      results.push({ platform, success: true, result })
-      
-      // Update post status in database
-      // await updatePostStatus(data.postId, platform, 'published', result.postId)
-      
-    } catch (error) {
-      console.error(`Failed to post to ${platform}:`, error)
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-      results.push({ platform, success: false, error: errorMessage })
-      
-      // Update post status in database
-      // await updatePostStatus(data.postId, platform, 'failed', null, error.message)
+      await databasePostingService.updatePostStatus(data.postId, data.userId, 'failed')
+    } catch (dbError) {
+      console.error('Failed to update database with error status:', dbError)
+    }
+    
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      results: []
     }
   }
-  
-  return { success: true, results }
 }
 
 const processRecurringJob = async (data: RecurringPostJobData): Promise<{ success: boolean; nextRun?: Date }> => {

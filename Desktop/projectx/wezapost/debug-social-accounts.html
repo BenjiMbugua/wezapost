@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Social Accounts</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result { 
+            margin: 15px 0; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; border: 1px solid #22c55e; }
+        .info { background: #dbeafe; border: 1px solid #3b82f6; }
+        .error { background: #fef2f2; border: 1px solid #ef4444; }
+        .warning { background: #fef3c7; border: 1px solid #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Social Accounts</h1>
+        <p>Debugging why Facebook and Instagram are posting to simulation instead of real accounts.</p>
+        
+        <h3>Tests:</h3>
+        <button onclick="checkSession()">1. Check Session</button>
+        <button onclick="checkLocalStorage()">2. Check localStorage</button>
+        <button onclick="checkSupabaseAccounts()">3. Check Supabase DB</button>
+        <button onclick="testFacebookAPI()">4. Test Facebook API</button>
+        <button onclick="testInstagramAPI()">5. Test Instagram API</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function showResult(message, type) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            resultsDiv.innerHTML += `<div class="result ${type}">[${timestamp}] ${message}</div>`;
+        }
+
+        async function checkSession() {
+            showResult('Checking current session...', 'info');
+            
+            try {
+                const response = await fetch('/api/auth/session');
+                const session = await response.json();
+                
+                if (session?.user) {
+                    showResult(`✅ Session Active:
+User ID: ${session.user.id}
+Email: ${session.user.email}
+Name: ${session.user.name}
+
+User ID Analysis:
+- Length: ${session.user.id.length}
+- Format: ${session.user.id.length === 36 ? 'UUID (Good for Supabase)' : 'OAuth ID (Needs UUID mapping)'}
+- Contains hyphens: ${session.user.id.includes('-')}`, 'success');
+                } else {
+                    showResult('❌ No active session - please login first', 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Session error: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkLocalStorage() {
+            showResult('Checking localStorage for social accounts...', 'info');
+            
+            try {
+                const accounts = localStorage.getItem('wezapost-demo-accounts');
+                
+                if (accounts) {
+                    const parsedAccounts = JSON.parse(accounts);
+                    showResult(`📦 localStorage Accounts Found (${parsedAccounts.length}):
+
+${parsedAccounts.map((acc, i) => `
+Account ${i + 1}:
+- Platform: ${acc.platform}
+- Username: ${acc.username}
+- Display Name: ${acc.display_name}
+- ID: ${acc.id}
+- Has access_token: ${!!acc.access_token}
+- Has real_oauth: ${acc.real_oauth}
+- Facebook Page ID: ${acc.facebook_page_id || 'N/A'}
+- Platform User ID: ${acc.platform_user_id || 'N/A'}
+- Active: ${acc.is_active}
+`).join('\n')}`, 'info');
+                } else {
+                    showResult('📦 No localStorage accounts found', 'warning');
+                }
+            } catch (error) {
+                showResult(`❌ localStorage error: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkSupabaseAccounts() {
+            showResult('Checking Supabase database for social accounts...', 'info');
+            
+            try {
+                // We'll use the Facebook API to indirectly check database access
+                const response = await fetch('/api/facebook/post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: 'Test content for debugging'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(`✅ Facebook API Response:
+Success: ${result.success}
+Simulated: ${result.simulated}
+Post ID: ${result.post?.id}
+Note: ${result.note || 'N/A'}
+
+Database Check Result:
+${result.simulated ? '❌ No valid Facebook account in database' : '✅ Real Facebook account found in database'}
+
+Debug Info:
+${JSON.stringify(result.debug_info || {}, null, 2)}`, result.simulated ? 'warning' : 'success');
+                } else {
+                    showResult(`❌ Facebook API Error:
+Error: ${result.error}
+Details: ${JSON.stringify(result.details || {}, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Supabase check error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFacebookAPI() {
+            showResult('Testing Facebook posting directly...', 'info');
+            
+            try {
+                const response = await fetch('/api/facebook/post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: `🔧 Facebook Debug Test - ${new Date().toISOString()}
+
+This is a test to check if Facebook posting is working.
+If this appears on your real Facebook page, then real posting works! ✅
+If this shows as successful but doesn't appear, it's simulated. ❌
+
+#debug #facebooktest #wezapost`
+                    })
+                });
+
+                const result = await response.json();
+                
+                const status = result.success ? (result.simulated ? 'SIMULATED SUCCESS' : 'REAL SUCCESS') : 'FAILED';
+                showResult(`📘 Facebook Test Result: ${status}
+
+Success: ${result.success}
+Simulated: ${result.simulated}
+Post ID: ${result.post?.id}
+URL: ${result.post?.url}
+Note: ${result.note}
+Error: ${result.error || 'None'}
+
+Analysis:
+${result.simulated ? '❌ Facebook account not properly configured - no access token in database' : '✅ Facebook account is properly configured and posting to real account'}
+
+Debug Info:
+${JSON.stringify(result.debug_info || result.details || {}, null, 2)}`, result.simulated ? 'warning' : (result.success ? 'success' : 'error'));
+
+            } catch (error) {
+                showResult(`❌ Facebook test error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInstagramAPI() {
+            showResult('Testing Instagram posting directly...', 'info');
+            
+            try {
+                // First get Instagram account
+                const accountResponse = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test_connection' })
+                });
+
+                const accountResult = await accountResponse.json();
+                
+                if (!accountResult.success || !accountResult.accounts) {
+                    showResult(`❌ No Instagram accounts found: ${accountResult.error}`, 'error');
+                    return;
+                }
+
+                const instagramAccount = accountResult.accounts.find(acc => acc.platform === 'instagram');
+                if (!instagramAccount) {
+                    showResult('❌ No Instagram account available', 'error');
+                    return;
+                }
+
+                // Test Instagram posting
+                const response = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'post',
+                        account: instagramAccount,
+                        content: `📸 Instagram Debug Test - ${new Date().toISOString()}
+
+This is a test to check if Instagram posting is working.
+If this appears on your real Instagram account, then real posting works! ✅
+If this shows as successful but doesn't appear, it's simulated. ❌
+
+#debug #instagramtest #wezapost`,
+                        mediaUrls: ['https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=1000&h=1000&fit=crop&crop=entropy&auto=format&fm=jpg&q=80']
+                    })
+                });
+
+                const result = await response.json();
+                
+                const status = result.success ? (result.simulated ? 'SIMULATED SUCCESS' : 'REAL SUCCESS') : 'FAILED';
+                showResult(`📸 Instagram Test Result: ${status}
+
+Success: ${result.success}
+Simulated: ${result.simulated}
+Post ID: ${result.postId}
+URL: ${result.url}
+Note: ${result.note}
+Error: ${result.error || 'None'}
+Validation Error: ${result.validation_error || 'None'}
+
+Account Info Used:
+- Username: @${instagramAccount.username}
+- Has Access Token: ${!!instagramAccount.access_token}
+- Facebook Page ID: ${instagramAccount.facebook_page_id || 'N/A'}
+- Platform User ID: ${instagramAccount.platform_user_id || 'N/A'}
+
+Analysis:
+${result.simulated ? '❌ Instagram business account validation failed - check Facebook page connection' : '✅ Instagram business account is properly configured'}
+
+Full Response:
+${JSON.stringify(result, null, 2)}`, result.simulated ? 'warning' : (result.success ? 'success' : 'error'));
+
+            } catch (error) {
+                showResult(`❌ Instagram test error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-start first test
+        window.onload = () => {
+            setTimeout(checkSession, 500);
+        };
+    </script>
+</body>
+</html>

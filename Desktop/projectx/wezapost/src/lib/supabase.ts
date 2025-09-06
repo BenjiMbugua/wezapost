@@ -198,6 +198,140 @@ export type Database = {
           }
         }
       }
+      curated_posts: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          user_id: string
+          content: string
+          hashtags: string[]
+          images: {
+            id: string
+            url: string
+            alt_text?: string
+            caption?: string
+            is_primary: boolean
+          }[]
+          links: {
+            id: string
+            url: string
+            title?: string
+            description?: string
+            domain: string
+          }[]
+          platforms: string[]
+          source: {
+            type: string
+            workflow_id?: string
+            source_url?: string
+            curated_at: string
+          }
+          status: 'draft' | 'reviewed' | 'approved' | 'scheduled' | 'published' | 'rejected'
+          metadata: {
+            character_count: number
+            estimated_engagement: number
+            content_type: 'text' | 'image' | 'link' | 'mixed'
+            topics: string[]
+            sentiment: 'positive' | 'negative' | 'neutral'
+          }
+          scheduling: {
+            suggested_time?: string
+            optimal_platforms?: string[]
+            priority: 'low' | 'medium' | 'high' | 'urgent'
+          }
+          reviewed_by?: string
+          reviewed_at?: string
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          user_id: string
+          content: string
+          hashtags?: string[]
+          images?: {
+            id: string
+            url: string
+            alt_text?: string
+            caption?: string
+            is_primary: boolean
+          }[]
+          links?: {
+            id: string
+            url: string
+            title?: string
+            description?: string
+            domain: string
+          }[]
+          platforms?: string[]
+          source: {
+            type: string
+            workflow_id?: string
+            source_url?: string
+            curated_at: string
+          }
+          status?: 'draft' | 'reviewed' | 'approved' | 'scheduled' | 'published' | 'rejected'
+          metadata: {
+            character_count: number
+            estimated_engagement: number
+            content_type: 'text' | 'image' | 'link' | 'mixed'
+            topics: string[]
+            sentiment: 'positive' | 'negative' | 'neutral'
+          }
+          scheduling: {
+            suggested_time?: string
+            optimal_platforms?: string[]
+            priority: 'low' | 'medium' | 'high' | 'urgent'
+          }
+          reviewed_by?: string
+          reviewed_at?: string
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          user_id?: string
+          content?: string
+          hashtags?: string[]
+          images?: {
+            id: string
+            url: string
+            alt_text?: string
+            caption?: string
+            is_primary: boolean
+          }[]
+          links?: {
+            id: string
+            url: string
+            title?: string
+            description?: string
+            domain: string
+          }[]
+          platforms?: string[]
+          source?: {
+            type: string
+            workflow_id?: string
+            source_url?: string
+            curated_at: string
+          }
+          status?: 'draft' | 'reviewed' | 'approved' | 'scheduled' | 'published' | 'rejected'
+          metadata?: {
+            character_count: number
+            estimated_engagement: number
+            content_type: 'text' | 'image' | 'link' | 'mixed'
+            topics: string[]
+            sentiment: 'positive' | 'negative' | 'neutral'
+          }
+          scheduling?: {
+            suggested_time?: string
+            optimal_platforms?: string[]
+            priority: 'low' | 'medium' | 'high' | 'urgent'
+          }
+          reviewed_by?: string
+          reviewed_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

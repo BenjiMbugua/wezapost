@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐦 Twitter OAuth Setup & Test</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f7fafc; 
+            color: #2d3748;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .step {
+            background: #edf2f7;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #1da1f2;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #1da1f2;
+        }
+        .copy-box {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #1da1f2;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover { background: #1991db; }
+        button {
+            background: #1da1f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1991db; }
+        .test-section {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .warning {
+            background: #fffaf0;
+            border: 1px solid #fbd38d;
+            padding: 15px;
+            border-radius: 6px;
+            color: #c05621;
+        }
+        .success { color: #38a169; }
+        .error { color: #e53e3e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐦 Twitter OAuth Setup & Test</h1>
+        <p>Let's get your Twitter account connected for real posting!</p>
+
+        <div class="warning">
+            ⚠️ <strong>Important:</strong> You need a Twitter Developer account to connect your real Twitter account. 
+            If you don't have one, you can still test with demo mode.
+        </div>
+
+        <div class="step">
+            <h3>Step 1: Get Twitter Developer Access (If Needed)</h3>
+            <p>1. Go to Twitter Developer Portal</p>
+            <button onclick="window.open('https://developer.twitter.com/en/portal/dashboard', '_blank')">
+                🔗 Open Twitter Developer Portal
+            </button>
+            <p>2. Apply for developer access (usually approved within minutes to hours)</p>
+            <p>3. Create a new App once approved</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Configure Your Twitter App</h3>
+            <p><strong>App Settings:</strong></p>
+            <ul>
+                <li><strong>App name:</strong> WezaPost</li>
+                <li><strong>Description:</strong> Personal social media management tool</li>
+                <li><strong>Website URL:</strong> http://localhost:3001</li>
+            </ul>
+            
+            <p><strong>OAuth 2.0 Settings:</strong></p>
+            <ul>
+                <li><strong>Type of App:</strong> Web App</li>
+                <li><strong>Callback URI:</strong> Copy this exactly ⬇️</li>
+            </ul>
+            
+            <div class="copy-box">
+http://localhost:3001/api/social/twitter/callback
+                <button class="copy-btn" onclick="copyToClipboard('http://localhost:3001/api/social/twitter/callback')">Copy</button>
+            </div>
+            
+            <p><strong>App permissions:</strong> Read and Write</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Get Your Credentials</h3>
+            <p>In your Twitter app dashboard:</p>
+            <ol>
+                <li>Go to <strong>Keys and tokens</strong> tab</li>
+                <li>Under <strong>OAuth 2.0 Client ID and Client Secret</strong></li>
+                <li>Copy the <strong>Client ID</strong></li>
+                <li>Copy the <strong>Client Secret</strong></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Update Your .env.local File</h3>
+            <p>Replace these lines in your <code>.env.local</code> file:</p>
+            
+            <div class="copy-box">
+TWITTER_CLIENT_ID="your_actual_twitter_client_id_here"
+TWITTER_CLIENT_SECRET="your_actual_twitter_client_secret_here"
+                <button class="copy-btn" onclick="copyToClipboard('TWITTER_CLIENT_ID=\"your_actual_twitter_client_id_here\"\nTWITTER_CLIENT_SECRET=\"your_actual_twitter_client_secret_here\"')">Copy Template</button>
+            </div>
+            
+            <p><strong>⚠️ Important:</strong> Replace the placeholder values with your actual credentials!</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Test Your Twitter Connection</h3>
+            <p>After updating your .env.local file:</p>
+            
+            <ol>
+                <li><strong>Restart your development server</strong></li>
+                <li><strong>Check configuration status:</strong></li>
+            </ol>
+            
+            <button onclick="checkTwitterConfig()">🔍 Check Twitter Configuration</button>
+            <div id="configResult" style="margin-top: 15px; padding: 10px; border-radius: 6px; display: none;"></div>
+            
+            <hr style="margin: 20px 0;">
+            
+            <h4>🚀 Test Real Twitter Connection</h4>
+            <p>Once your credentials are configured:</p>
+            
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')">
+                📱 Go to Dashboard & Test Twitter Connection
+            </button>
+            
+            <p><small>In the dashboard, click "Connect" on Twitter. If configured correctly, you'll be redirected to Twitter for authorization.</small></p>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 What Should Happen</h3>
+            <ol>
+                <li><strong>Click "Connect" on Twitter</strong> → Redirects to Twitter.com</li>
+                <li><strong>Authorize WezaPost</strong> → Twitter asks for permission</li>
+                <li><strong>Redirect back to dashboard</strong> → Your real Twitter account appears</li>
+                <li><strong>Create a test tweet</strong> → Post directly to your Twitter!</li>
+            </ol>
+        </div>
+
+        <div class="warning">
+            <h4>🔧 Don't Have Twitter Developer Access?</h4>
+            <p>No problem! You can still test Twitter functionality in demo mode:</p>
+            <ul>
+                <li>Go to the dashboard</li>
+                <li>Click "Connect" on Twitter</li>
+                <li>It will create a demo Twitter connection</li>
+                <li>You can test the posting interface (won't post to real Twitter)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        async function checkTwitterConfig() {
+            const result = document.getElementById('configResult');
+            result.style.display = 'block';
+            result.innerHTML = 'Checking Twitter configuration...';
+            
+            try {
+                // Test if the API endpoint works
+                const response = await fetch('/api/social/twitter/connect');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    result.innerHTML = `<span class="success">✅ Twitter OAuth is configured!</span><br>
+                        You can now connect your real Twitter account.`;
+                    result.style.background = '#f0fff4';
+                    result.style.borderColor = '#9ae6b4';
+                } else if (data.error === 'Twitter OAuth not configured') {
+                    result.innerHTML = `<span class="error">❌ Twitter OAuth not configured</span><br>
+                        ${data.message}<br><br>
+                        Please add your Twitter credentials to .env.local and restart the server.`;
+                    result.style.background = '#fed7d7';
+                    result.style.borderColor = '#fc8181';
+                } else {
+                    result.innerHTML = `<span class="error">❌ Error: ${data.error}</span>`;
+                    result.style.background = '#fed7d7';
+                    result.style.borderColor = '#fc8181';
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Connection failed</span><br>
+                    Make sure your development server is running on http://localhost:3001`;
+                result.style.background = '#fed7d7';
+                result.style.borderColor = '#fc8181';
+            }
+        }
+
+        // Auto-check configuration on load
+        window.onload = () => {
+            setTimeout(checkTwitterConfig, 1000);
+        };
+    </script>
+</body>
+</html>

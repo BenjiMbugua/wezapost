@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Instagram Issue</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .container { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .step { 
+            border: 1px solid #e2e8f0; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            background: #f8fafc;
+        }
+        .result { 
+            margin: 15px 0; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; border-left: 4px solid #22c55e; }
+        .info { background: #dbeafe; border-left: 4px solid #3b82f6; }
+        .error { background: #fef2f2; border-left: 4px solid #ef4444; }
+        .warning { background: #fef3c7; border-left: 4px solid #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Debug Instagram "Invalid Date" Issue</h1>
+        <p>Let's systematically debug why Instagram posting shows "published invalid date"</p>
+        
+        <div class="step">
+            <h3>Step 1: Check Connected Instagram Accounts</h3>
+            <p>First, let's see what Instagram account data is available:</p>
+            <button onclick="checkInstagramAccounts()">Check Instagram Accounts</button>
+            <div id="accounts-results"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Validate Instagram Permissions</h3>
+            <p>Test if we can validate Instagram business account permissions:</p>
+            <button onclick="validateInstagramAccount()">Validate Instagram Account</button>
+            <div id="validation-results"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Test Instagram Posting</h3>
+            <p>Try to post and see the exact error response:</p>
+            <button onclick="testInstagramPost()">Test Instagram Post</button>
+            <div id="posting-results"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Test Date Formats</h3>
+            <p>Check different date formats to identify the issue:</p>
+            <button onclick="testDateFormats()">Test Date Formats</button>
+            <div id="date-results"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResult(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const timestamp = new Date().toLocaleTimeString();
+            container.innerHTML += `<div class="result ${type}">[${timestamp}] ${message}</div>`;
+        }
+
+        async function checkInstagramAccounts() {
+            showResult('accounts-results', 'Checking Instagram account connections...', 'info');
+            
+            try {
+                const response = await fetch('/api/test-instagram-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test_connection' })
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.accounts) {
+                    showResult('accounts-results', `Found ${result.accounts.length} Instagram accounts:
+${result.accounts.map((acc, i) => `
+Account ${i + 1}:
+- Username: @${acc.username}
+- Display Name: ${acc.display_name}
+- Platform: ${acc.platform}
+- ID: ${acc.id}
+- Active: ${acc.is_active}
+`).join('')}`, 'success');
+
+                    // Store first Instagram account for further tests
+                    window.instagramAccount = result.accounts.find(acc => acc.platform === 'instagram');
+                    if (window.instagramAccount) {
+                        showResult('accounts-results', `✅ Selected account for testing: @${window.instagramAccount.username}`, 'info');
+                    }
+                } else {
+                    showResult('accounts-results', `❌ No Instagram accounts found: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('accounts-results', `❌ Error checking accounts: ${error.message}`, 'error');
+            }
+        }
+
+        async function validateInstagramAccount() {
+            if (!window.instagramAccount) {
+                showResult('validation-results', '❌ No Instagram account available. Run Step 1 first.', 'error');
+                return;
+            }
+
+            showResult('validation-results', `Validating Instagram account: @${window.instagramAccount.username}`, 'info');
+            
+            try {
+                const response = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'validate',
+                        account: window.instagramAccount
+                    })
+                });
+
+                const result = await response.json();
+                
+                showResult('validation-results', `Validation Result:
+Success: ${result.success}
+Has Permissions: ${result.hasPermissions}
+Error: ${result.error || 'None'}
+Business Account: ${result.businessAccount ? `@${result.businessAccount.username}` : 'Not found'}
+
+Debug Info:
+${JSON.stringify(result.debug || {}, null, 2)}
+
+Full Response:
+${JSON.stringify(result, null, 2)}`, result.success ? 'success' : 'warning');
+
+            } catch (error) {
+                showResult('validation-results', `❌ Validation error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInstagramPost() {
+            if (!window.instagramAccount) {
+                showResult('posting-results', '❌ No Instagram account available. Run Step 1 first.', 'error');
+                return;
+            }
+
+            showResult('posting-results', `Testing Instagram posting with account: @${window.instagramAccount.username}`, 'info');
+            
+            try {
+                const response = await fetch('/api/test-instagram-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'post',
+                        account: window.instagramAccount,
+                        content: `🧪 Testing Instagram posting - ${new Date().toISOString()}\\n\\n✅ Debug test for invalid date issue\\n\\n#wezapost #debug #instagram`,
+                        mediaUrls: ['https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=1000&h=1000&fit=crop&crop=entropy&auto=format&fm=jpg&q=80']
+                    })
+                });
+
+                const result = await response.json();
+                
+                const statusIcon = result.success ? '✅' : '❌';
+                const statusText = result.success ? 'SUCCESS' : 'FAILED';
+                
+                showResult('posting-results', `${statusIcon} ${statusText}
+
+Success: ${result.success}
+Post ID: ${result.postId || 'N/A'}
+Published At: ${result.publishedAt || 'N/A'}
+URL: ${result.url || 'N/A'}
+Simulated: ${result.simulated || 'false'}
+Note: ${result.note || 'N/A'}
+Error: ${result.error || 'None'}
+
+Published At Analysis:
+- Raw value: "${result.publishedAt}"
+- Is valid date: ${result.publishedAt ? new Date(result.publishedAt).toString() !== 'Invalid Date' : 'No date provided'}
+- Parsed date: ${result.publishedAt ? new Date(result.publishedAt).toString() : 'N/A'}
+
+Full Response:
+${JSON.stringify(result, null, 2)}`, result.success ? (result.simulated ? 'warning' : 'success') : 'error');
+
+            } catch (error) {
+                showResult('posting-results', `❌ Posting error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDateFormats() {
+            showResult('date-results', 'Testing various date formats...', 'info');
+            
+            const now = new Date();
+            const formats = {
+                'ISO String': now.toISOString(),
+                'UTC String': now.toUTCString(),
+                'Local String': now.toString(),
+                'Unix Timestamp': now.getTime(),
+                'JSON': now.toJSON(),
+                'Date Only': now.toISOString().split('T')[0],
+                'Custom Format': now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0')
+            };
+
+            let formatResults = 'Date Format Testing:\\n\\n';
+            
+            for (const [name, value] of Object.entries(formats)) {
+                const isValid = new Date(value).toString() !== 'Invalid Date';
+                formatResults += `${name}: ${value} (Valid: ${isValid})\\n`;
+            }
+
+            formatResults += `\\n\\nCurrent system time: ${now}\\nTimezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\\n`;
+
+            showResult('date-results', formatResults, 'info');
+        }
+
+        // Auto-start first check
+        window.onload = () => {
+            setTimeout(checkInstagramAccounts, 1000);
+        };
+    </script>
+</body>
+</html>

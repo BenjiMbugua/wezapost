@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐦 Real Twitter OAuth Setup Guide</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .setup-section {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .warning-section {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #1da1f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1991db; }
+        .setup-btn { background: #3b82f6; }
+        .setup-btn:hover { background: #2563eb; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .copy-code {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-code:hover {
+            border-color: #3b82f6;
+            background: #e0f2fe;
+        }
+        .step-number {
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .credential-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐦 Real Twitter OAuth Setup Guide</h1>
+        <p>Let's connect your actual Twitter account so you can post real tweets!</p>
+
+        <div class="warning-section">
+            <h3>⚠️ Important: This Will Post Real Tweets</h3>
+            <ul>
+                <li>📤 Posts will appear on your actual Twitter timeline</li>
+                <li>👥 They will be visible to all your followers</li>
+                <li>🔒 Make sure you're comfortable with the content going public</li>
+                <li>🧪 Test with demo mode first if you're unsure</li>
+            </ul>
+        </div>
+
+        <div class="setup-section">
+            <h3>🚀 Step-by-Step OAuth Setup</h3>
+            
+            <h4><span class="step-number">1</span>Get Twitter Developer Access</h4>
+            <p>You need a Twitter Developer account (free but requires approval):</p>
+            <ul>
+                <li>Go to Twitter Developer Portal</li>
+                <li>Apply for developer access (usually approved within hours)</li>
+                <li>Explain your use case: "Personal social media management tool"</li>
+            </ul>
+            <button onclick="window.open('https://developer.twitter.com/en/portal/dashboard', '_blank')" class="setup-btn">
+                🔗 Open Twitter Developer Portal
+            </button>
+
+            <h4><span class="step-number">2</span>Create a Twitter App</h4>
+            <p>Once approved, create a new app:</p>
+            <ol>
+                <li>Click "Create App" or "+ Add App"</li>
+                <li>Fill in app details:
+                    <ul>
+                        <li><strong>App Name:</strong> "WezaPost Social Manager" (or your preference)</li>
+                        <li><strong>Description:</strong> "Personal social media management and posting tool"</li>
+                        <li><strong>Website:</strong> http://localhost:3001 (for development)</li>
+                    </ul>
+                </li>
+                <li>Set App Type to <strong>"Web App"</strong></li>
+                <li>Set permissions to <strong>"Read and Write"</strong></li>
+            </ol>
+
+            <h4><span class="step-number">3</span>Configure OAuth Settings</h4>
+            <p>Set up the callback URL in your Twitter app:</p>
+            <div class="credential-box">
+                <strong>Callback URL:</strong>
+                <div class="copy-code" onclick="copyToClipboard('http://localhost:3001/api/social/twitter/callback')">
+                    http://localhost:3001/api/social/twitter/callback
+                </div>
+                <small>Click to copy • Paste this exactly in your Twitter app settings</small>
+            </div>
+
+            <h4><span class="step-number">4</span>Get Your Credentials</h4>
+            <p>From your Twitter app dashboard, copy these credentials:</p>
+            <div class="credential-box">
+                <strong>Client ID:</strong> Usually starts with a long alphanumeric string<br>
+                <strong>Client Secret:</strong> A secret key that should be kept private
+            </div>
+        </div>
+
+        <div class="success-section">
+            <h3>🎯 Enter Credentials in WezaPost</h3>
+            
+            <h4>Two Methods Available:</h4>
+            
+            <h5>Method 1: Setup Wizard (Recommended)</h5>
+            <ol>
+                <li>Go back to your WezaPost dashboard</li>
+                <li>Click "Connect" next to Twitter</li>
+                <li>The setup wizard should appear automatically</li>
+                <li>Follow the step-by-step instructions</li>
+                <li>Enter your Client ID and Secret in the secure form</li>
+            </ol>
+            
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                📱 Go to WezaPost Dashboard
+            </button>
+
+            <h5>Method 2: Environment Variables (Alternative)</h5>
+            <p>If the wizard doesn't work, you can add to your .env.local file:</p>
+            <div class="credential-box">
+                <div class="copy-code" onclick="copyToClipboard('TWITTER_CLIENT_ID=your_client_id_here\nTWITTER_CLIENT_SECRET=your_client_secret_here')">
+                    TWITTER_CLIENT_ID=your_client_id_here<br>
+                    TWITTER_CLIENT_SECRET=your_client_secret_here
+                </div>
+                <small>Replace with your actual credentials</small>
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <h3>🧪 Test Your Connection</h3>
+            
+            <h4>After Setting Up Credentials:</h4>
+            <ol>
+                <li>Return to WezaPost dashboard</li>
+                <li>Click "Connect" next to Twitter</li>
+                <li>You should be redirected to Twitter for authorization</li>
+                <li>Authorize your app</li>
+                <li>You'll be redirected back with a connected account</li>
+            </ol>
+
+            <h4>✅ Success Indicators:</h4>
+            <ul>
+                <li>Twitter shows as "Connected" in your dashboard</li>
+                <li>You see your Twitter username and profile</li>
+                <li>A green indicator shows "Real OAuth" is active</li>
+            </ul>
+        </div>
+
+        <div class="success-section">
+            <h3>📝 Create Your "The Age Resolve" Post</h3>
+            
+            <p>Once connected, you can create your post:</p>
+            
+            <h4>🎯 Recommended Enhanced Version:</h4>
+            <div class="credential-box">
+                <div class="copy-code" onclick="copyToClipboard('💭 the age resolve\n\n#philosophy #reflection')">
+                    💭 the age resolve<br><br>#philosophy #reflection
+                </div>
+                <small>37 characters • Perfect for Twitter</small>
+            </div>
+
+            <h4>📅 Scheduling Options:</h4>
+            <ul>
+                <li><strong>Immediate:</strong> Click "Publish Now" for instant posting</li>
+                <li><strong>Tomorrow 9 AM:</strong> Optimal engagement time</li>
+                <li><strong>Peak Time:</strong> Wednesday 3 PM for maximum reach</li>
+            </ul>
+
+            <h4>Final Steps:</h4>
+            <ol>
+                <li>Go to "Create Post" section</li>
+                <li>Paste your enhanced content</li>
+                <li>Select Twitter (should show as connected)</li>
+                <li>Choose immediate or scheduled posting</li>
+                <li>Click "Publish Now" or "Schedule Post"</li>
+            </ol>
+        </div>
+
+        <div class="warning-section">
+            <h3>🔧 Troubleshooting</h3>
+            
+            <h4>If Connection Fails:</h4>
+            <ul>
+                <li>Check that callback URL is exactly correct</li>
+                <li>Verify Client ID and Secret are properly copied</li>
+                <li>Make sure Twitter app has "Read and Write" permissions</li>
+                <li>Try the setup wizard again</li>
+            </ul>
+
+            <h4>Common Issues:</h4>
+            <ul>
+                <li><strong>400 Error:</strong> Usually incorrect callback URL</li>
+                <li><strong>401 Error:</strong> Invalid credentials</li>
+                <li><strong>403 Error:</strong> App permissions issue</li>
+            </ul>
+        </div>
+
+        <div style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 1px solid #3b82f6; margin-top: 20px;">
+            <h3>🎉 Ready to Post!</h3>
+            <p>Once everything is connected, your "the age resolve" post will be published to your actual Twitter account. The scheduling system will handle timing automatically, and you'll see real engagement metrics!</p>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                event.target.style.backgroundColor = '#dcfce7';
+                event.target.style.borderColor = '#22c55e';
+                
+                setTimeout(() => {
+                    event.target.style.backgroundColor = '#f1f5f9';
+                    event.target.style.borderColor = '#cbd5e1';
+                }, 1000);
+                
+                // Show temporary success message
+                const temp = document.createElement('div');
+                temp.textContent = '✅ Copied to clipboard!';
+                temp.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 6px; z-index: 1000; font-family: monospace;';
+                document.body.appendChild(temp);
+                
+                setTimeout(() => document.body.removeChild(temp), 2000);
+            });
+        }
+    </script>
+</body>
+</html>

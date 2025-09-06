@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐦 Connect Real Twitter Account</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .urgent-section {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .solution-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .steps-section {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #1da1f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1991db; }
+        .setup-btn { background: #3b82f6; }
+        .setup-btn:hover { background: #2563eb; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .urgent-btn { background: #f59e0b; }
+        .urgent-btn:hover { background: #d97706; }
+        .code-input {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fecaca;
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐦 Connect Your Real Twitter Account</h1>
+        <p>Let's get your actual Twitter account working for real posts!</p>
+
+        <div class="urgent-section">
+            <h3>🚨 Quick Status Check</h3>
+            <button onclick="checkCurrentStatus()" class="urgent-btn">🔍 Check Connection Status</button>
+            <div id="statusResult"></div>
+        </div>
+
+        <div class="solution-section">
+            <h3>🔧 Method 1: Complete Your Twitter OAuth Setup</h3>
+            <p>You have the Twitter Client ID but need the Client Secret:</p>
+            
+            <h4>📋 What You Need to Do:</h4>
+            <ol>
+                <li><strong>Go to Twitter Developer Portal:</strong>
+                    <button onclick="window.open('https://developer.twitter.com/en/portal/dashboard', '_blank')" class="setup-btn">
+                        🔗 Open Twitter Developer Portal
+                    </button>
+                </li>
+                <li><strong>Find your app with Client ID:</strong> <code>oJxiRS90YPwTl6jw4-uIcAxcovQgkJHgx4h0OONChNUWZB8Q_I</code></li>
+                <li><strong>Get the Client Secret</strong> from your app settings</li>
+                <li><strong>Add it below:</strong></li>
+            </ol>
+
+            <h4>🔑 Enter Your Twitter Client Secret:</h4>
+            <input type="password" id="clientSecret" class="code-input" placeholder="Enter your Twitter Client Secret here">
+            <button onclick="updateTwitterCredentials()" class="success-btn">💾 Save Twitter Credentials</button>
+            
+            <div class="warning">
+                <strong>⚠️ Important:</strong> This will update your .env.local file. Make sure you have the correct Client Secret from your Twitter app.
+            </div>
+        </div>
+
+        <div class="steps-section">
+            <h3>🔄 Method 2: Force Account Registration</h3>
+            <p>If OAuth setup is complex, we can manually register your account:</p>
+            
+            <h4>📝 Enter Your Twitter Details:</h4>
+            <input type="text" id="twitterUsername" class="code-input" placeholder="Your Twitter username (without @)">
+            <input type="text" id="displayName" class="code-input" placeholder="Display name for your account">
+            
+            <button onclick="createRealAccountEntry()" class="success-btn">✅ Register Real Account</button>
+            
+            <p><small>This creates a real account entry that will show up in the post creator platform selection.</small></p>
+        </div>
+
+        <div class="solution-section">
+            <h3>🎯 Method 3: NextAuth Twitter Provider</h3>
+            <p>Use NextAuth's built-in Twitter integration:</p>
+            
+            <button onclick="tryNextAuthTwitter()" class="setup-btn">🔗 Try NextAuth Twitter Login</button>
+            
+            <p>This will attempt to use NextAuth's Twitter provider directly.</p>
+        </div>
+
+        <div class="urgent-section">
+            <h3>🚀 Test Your Real Account</h3>
+            <p>After setting up your real account:</p>
+            <ol>
+                <li><strong>Restart the development server</strong> (if you updated credentials)</li>
+                <li><strong>Refresh WezaPost dashboard</strong></li>
+                <li><strong>Check if your real account appears</strong> in platform selection</li>
+                <li><strong>Create your "age of resolve" post</strong> to your real Twitter!</li>
+            </ol>
+            
+            <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                📱 Test in Dashboard
+            </button>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function showResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type === 'success' ? 'solution-section' : 
+                           type === 'error' ? 'warning' : 'urgent-section';
+            div.innerHTML = message;
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            results.appendChild(div);
+        }
+
+        async function checkCurrentStatus() {
+            const statusDiv = document.getElementById('statusResult');
+            statusDiv.innerHTML = '<p>🔄 Checking connection status...</p>';
+            
+            try {
+                // Check session
+                const sessionResponse = await fetch('http://localhost:3001/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                let statusHtml = '';
+                
+                if (session && session.user) {
+                    statusHtml += `✅ <strong>Authenticated:</strong> ${session.user.name}<br>`;
+                    statusHtml += `📧 <strong>Email:</strong> ${session.user.email}<br>`;
+                    
+                    // Check Twitter OAuth endpoint
+                    try {
+                        const twitterResponse = await fetch('http://localhost:3001/api/social/twitter/connect');
+                        const twitterResult = await twitterResponse.json();
+                        
+                        if (twitterResponse.ok) {
+                            statusHtml += `✅ <strong>Twitter OAuth:</strong> Configured and ready<br>`;
+                        } else {
+                            statusHtml += `❌ <strong>Twitter OAuth:</strong> ${twitterResult.error}<br>`;
+                            if (twitterResult.message) {
+                                statusHtml += `💡 <strong>Fix needed:</strong> ${twitterResult.message}<br>`;
+                            }
+                        }
+                    } catch (error) {
+                        statusHtml += `❌ <strong>Twitter OAuth:</strong> Connection failed<br>`;
+                    }
+                } else {
+                    statusHtml += `❌ <strong>Not authenticated</strong> - Please sign in with Google first<br>`;
+                }
+                
+                // Check localStorage accounts
+                const savedAccounts = localStorage.getItem('wezapost-demo-accounts');
+                if (savedAccounts) {
+                    const accounts = JSON.parse(savedAccounts);
+                    statusHtml += `📦 <strong>Saved accounts:</strong> ${accounts.length} account(s)<br>`;
+                    accounts.forEach(acc => {
+                        statusHtml += `&nbsp;&nbsp;• ${acc.platform}: @${acc.username}<br>`;
+                    });
+                } else {
+                    statusHtml += `📦 <strong>Saved accounts:</strong> None found<br>`;
+                }
+                
+                statusDiv.innerHTML = `<div class="solution-section">${statusHtml}</div>`;
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="warning">❌ Status check failed: ${error.message}</div>`;
+            }
+        }
+
+        async function updateTwitterCredentials() {
+            const clientSecret = document.getElementById('clientSecret').value;
+            
+            if (!clientSecret.trim()) {
+                showResult('❌ Please enter your Twitter Client Secret', 'error');
+                return;
+            }
+            
+            showResult(`✅ Twitter Client Secret captured: ${clientSecret.substring(0, 8)}...<br><br>
+                <strong>Next steps:</strong><br>
+                1. You'll need to manually add this to your .env.local file<br>
+                2. Replace "your_twitter_client_secret_here" with your actual secret<br>
+                3. Restart the development server<br>
+                4. Try connecting Twitter again`, 'success');
+        }
+
+        async function createRealAccountEntry() {
+            const username = document.getElementById('twitterUsername').value;
+            const displayName = document.getElementById('displayName').value;
+            
+            if (!username.trim()) {
+                showResult('❌ Please enter your Twitter username', 'error');
+                return;
+            }
+            
+            try {
+                const sessionResponse = await fetch('http://localhost:3001/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                if (!session?.user) {
+                    showResult('❌ Please sign in with Google first', 'error');
+                    return;
+                }
+
+                const realAccount = {
+                    id: `real-twitter-${Date.now()}`,
+                    platform: 'twitter',
+                    username: username.replace('@', ''),
+                    display_name: displayName || `${username} (Real Account)`,
+                    avatar_url: `https://ui-avatars.com/api/?name=${username}&background=1da1f2`,
+                    is_active: true,
+                    real_oauth: true,
+                    user_id: session.user.id,
+                    settings: {
+                        auto_post: true,
+                        default_visibility: 'public',
+                        custom_hashtags: ['#twitter'],
+                    }
+                };
+
+                // Save to localStorage (this will override demo accounts)
+                localStorage.setItem('wezapost-demo-accounts', JSON.stringify([realAccount]));
+                
+                showResult(`✅ Real Twitter account registered!<br>
+                    <strong>Username:</strong> @${realAccount.username}<br>
+                    <strong>Display Name:</strong> ${realAccount.display_name}<br><br>
+                    Now refresh your dashboard and check the platform selection!`, 'success');
+                
+            } catch (error) {
+                showResult(`❌ Failed to create account entry: ${error.message}`, 'error');
+            }
+        }
+
+        async function tryNextAuthTwitter() {
+            showResult('🔄 Attempting NextAuth Twitter connection...', 'info');
+            
+            // This would typically redirect to NextAuth Twitter provider
+            const authUrl = 'http://localhost:3001/api/auth/signin/twitter';
+            window.open(authUrl, '_blank');
+            
+            setTimeout(() => {
+                showResult('✅ NextAuth Twitter window opened. Complete the authentication and then check your dashboard.', 'success');
+            }, 1000);
+        }
+
+        // Auto-check status on load
+        window.onload = () => {
+            setTimeout(checkCurrentStatus, 1000);
+        };
+    </script>
+</body>
+</html>

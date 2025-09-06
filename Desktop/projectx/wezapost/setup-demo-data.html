@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WezaPost Demo Data Setup</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+        .container { max-width: 600px; margin: 0 auto; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; }
+        button:hover { background: #2563eb; }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        pre { background: #374151; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 WezaPost Demo Data Setup</h1>
+        <p>This will populate your browser's localStorage with demo data so you can test all functionality immediately.</p>
+        
+        <button onclick="setupDemoData()">Setup Demo Data</button>
+        <button onclick="clearDemoData()">Clear Demo Data</button>
+        <button onclick="viewDemoData()">View Current Data</button>
+        
+        <div id="status"></div>
+        <div id="output"></div>
+        
+        <h2>What This Does:</h2>
+        <ul>
+            <li>✅ Creates 3 connected social media accounts (Twitter, LinkedIn, Facebook)</li>
+            <li>✅ Adds 2 demo posts (1 published, 1 scheduled)</li>
+            <li>✅ Enables immediate testing of all functionality</li>
+            <li>✅ Works without database or OAuth setup</li>
+        </ul>
+        
+        <h2>After Setup:</h2>
+        <p>Go to <a href="http://localhost:3001/dashboard" style="color: #3b82f6;">http://localhost:3001/dashboard</a> to see the functional demo!</p>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : '';
+            statusDiv.innerHTML = `<p class="${className}">${message}</p>`;
+        }
+
+        function setupDemoData() {
+            try {
+                // Demo social accounts
+                const demoAccounts = [
+                    {
+                        id: 'demo-twitter-001',
+                        platform: 'twitter',
+                        username: 'demo_twitter_user',
+                        display_name: 'Demo Twitter/X Account',
+                        avatar_url: 'https://ui-avatars.com/api/?name=Twitter&background=1da1f2',
+                        is_active: true,
+                        settings: {
+                            auto_post: true,
+                            default_visibility: 'public',
+                            custom_hashtags: ['#twitter', '#socialmedia', '#wezapost']
+                        }
+                    },
+                    {
+                        id: 'demo-linkedin-001',
+                        platform: 'linkedin',
+                        username: 'demo_linkedin_user',
+                        display_name: 'Demo LinkedIn Account',
+                        avatar_url: 'https://ui-avatars.com/api/?name=LinkedIn&background=0a66c2',
+                        is_active: true,
+                        settings: {
+                            auto_post: true,
+                            default_visibility: 'public',
+                            custom_hashtags: ['#linkedin', '#professional', '#wezapost']
+                        }
+                    },
+                    {
+                        id: 'demo-facebook-001',
+                        platform: 'facebook',
+                        username: 'demo_facebook_user',
+                        display_name: 'Demo Facebook Account',
+                        avatar_url: 'https://ui-avatars.com/api/?name=Facebook&background=1877f2',
+                        is_active: true,
+                        settings: {
+                            auto_post: true,
+                            default_visibility: 'public',
+                            custom_hashtags: ['#facebook', '#social', '#wezapost']
+                        }
+                    }
+                ];
+
+                // Demo posts
+                const demoPosts = [
+                    {
+                        id: 'demo-post-001',
+                        content: 'Just updated WezaPost to Node.js v24.6.0! 🚀 All systems running smoothly with enhanced functionality.',
+                        platforms: ['twitter', 'linkedin'],
+                        status: 'published',
+                        scheduled_for: null,
+                        created_at: new Date().toISOString()
+                    },
+                    {
+                        id: 'demo-post-002',
+                        content: 'Excited to share my thoughts on social media automation! Check out how WezaPost makes content management effortless. 📱✨',
+                        platforms: ['facebook', 'linkedin'],
+                        status: 'scheduled',
+                        scheduled_for: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+                        created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString() // 30 minutes ago
+                    }
+                ];
+
+                // Save to localStorage
+                localStorage.setItem('wezapost-demo-accounts', JSON.stringify(demoAccounts));
+                localStorage.setItem('wezapost-demo-posts', JSON.stringify(demoPosts));
+
+                log('✅ Demo data setup complete! Go to the dashboard to test functionality.', 'success');
+                
+                // Show what was created
+                const output = document.getElementById('output');
+                output.innerHTML = `
+                    <h3>Demo Data Created:</h3>
+                    <pre><strong>Social Accounts:</strong> ${demoAccounts.length} accounts
+• ${demoAccounts.map(acc => `${acc.platform} (@${acc.username})`).join('\n• ')}
+
+<strong>Posts:</strong> ${demoPosts.length} posts
+• Published: "${demoPosts[0].content.substring(0, 50)}..."
+• Scheduled: "${demoPosts[1].content.substring(0, 50)}..."</pre>
+                `;
+            } catch (error) {
+                log('❌ Error setting up demo data: ' + error.message, 'error');
+            }
+        }
+
+        function clearDemoData() {
+            try {
+                localStorage.removeItem('wezapost-demo-accounts');
+                localStorage.removeItem('wezapost-demo-posts');
+                log('🗑️ Demo data cleared successfully.', 'success');
+                document.getElementById('output').innerHTML = '';
+            } catch (error) {
+                log('❌ Error clearing demo data: ' + error.message, 'error');
+            }
+        }
+
+        function viewDemoData() {
+            try {
+                const accounts = JSON.parse(localStorage.getItem('wezapost-demo-accounts') || '[]');
+                const posts = JSON.parse(localStorage.getItem('wezapost-demo-posts') || '[]');
+                
+                const output = document.getElementById('output');
+                output.innerHTML = `
+                    <h3>Current Demo Data:</h3>
+                    <pre><strong>Social Accounts:</strong> ${accounts.length}
+${accounts.map(acc => `• ${acc.platform}: ${acc.display_name}`).join('\n')}
+
+<strong>Posts:</strong> ${posts.length}
+${posts.map(post => `• ${post.status}: "${post.content.substring(0, 50)}..."`).join('\n')}</pre>
+                `;
+                
+                if (accounts.length === 0 && posts.length === 0) {
+                    log('📭 No demo data found. Click "Setup Demo Data" to create test data.', 'info');
+                } else {
+                    log('📊 Demo data loaded successfully.', 'success');
+                }
+            } catch (error) {
+                log('❌ Error viewing demo data: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-view data on load
+        window.onload = () => viewDemoData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔍 Debug Account Loading</title>
+    <style>
+        body { 
+            font-family: monospace;
+            padding: 20px; 
+            background: #f8fafc; 
+            color: #1e293b;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; border-color: #22c55e; color: #16a34a; }
+        .error { background: #fecaca; border-color: #ef4444; color: #dc2626; }
+        .warning { background: #fef3c7; border-color: #f59e0b; color: #d97706; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔍 Account Loading Debugger</h2>
+        <p>Let's debug why your real Twitter account isn't showing in the post creator...</p>
+        
+        <button onclick="checkSession()">1. Check Session</button>
+        <button onclick="checkLocalStorage()">2. Check localStorage</button>
+        <button onclick="checkSocialManager()">3. Test Social Manager</button>
+        <button onclick="refreshPostCreator()">4. Refresh Post Creator</button>
+        <button onclick="clearAndReset()">5. Clear & Reset</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function addResult(message, type = 'result') {
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function checkSession() {
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/session');
+                const session = await response.json();
+                
+                if (session && session.user) {
+                    addResult(`✅ Authenticated: ${session.user.name}\\nUser ID: ${session.user.id}\\nEmail: ${session.user.email}`, 'success');
+                } else {
+                    addResult(`❌ Not authenticated - this could be why accounts aren't loading`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Session check failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkLocalStorage() {
+            try {
+                // Check demo accounts
+                const demoAccounts = localStorage.getItem('wezapost-demo-accounts');
+                if (demoAccounts) {
+                    const accounts = JSON.parse(demoAccounts);
+                    addResult(`📦 Demo accounts in localStorage: ${accounts.length} accounts\\n${JSON.stringify(accounts, null, 2)}`, 'result');
+                } else {
+                    addResult(`ℹ️ No demo accounts in localStorage`, 'result');
+                }
+
+                // Check if there are any other relevant keys
+                const allKeys = Object.keys(localStorage).filter(key => key.includes('weza') || key.includes('social') || key.includes('twitter'));
+                if (allKeys.length > 0) {
+                    addResult(`🔍 Other relevant localStorage keys: ${allKeys.join(', ')}`, 'result');
+                    allKeys.forEach(key => {
+                        const value = localStorage.getItem(key);
+                        addResult(`${key}: ${value}`, 'result');
+                    });
+                } else {
+                    addResult(`ℹ️ No other relevant localStorage keys found`, 'result');
+                }
+            } catch (error) {
+                addResult(`❌ localStorage check failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkSocialManager() {
+            try {
+                addResult(`🔄 Testing social manager account loading...`, 'result');
+                
+                // Try to fetch session first
+                const sessionResponse = await fetch('http://localhost:3001/api/auth/session');
+                const session = await sessionResponse.json();
+                
+                if (!session?.user?.id) {
+                    addResult(`⚠️ Cannot test social manager - no authenticated session`, 'warning');
+                    return;
+                }
+
+                addResult(`🔍 User ID: ${session.user.id}`, 'result');
+                
+                // The social manager would normally be imported, but we can't do that in this context
+                // Instead, let's check what the browser console shows
+                addResult(`📋 To debug further:\\n1. Open browser DevTools (F12)\\n2. Go to Console tab\\n3. Refresh the WezaPost dashboard\\n4. Look for messages like "Loaded real connected accounts" or "Post creator loaded accounts"`, 'result');
+
+            } catch (error) {
+                addResult(`❌ Social manager test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function refreshPostCreator() {
+            addResult(`🔄 To refresh the post creator and see debug logs:`, 'result');
+            addResult(`1. Go to WezaPost dashboard: http://localhost:3001/dashboard`, 'result');
+            addResult(`2. Open browser DevTools (F12) → Console tab`, 'result');
+            addResult(`3. Look for these debug messages:`, 'result');
+            addResult(`   - "Loaded real connected accounts: [...]"`, 'result');
+            addResult(`   - "Post creator loaded accounts: [...]"`, 'result');
+            addResult(`4. If you see these logs, the accounts should appear in platform selection`, 'result');
+            
+            window.open('http://localhost:3001/dashboard', '_blank');
+        }
+
+        async function clearAndReset() {
+            // Clear localStorage
+            const keys = Object.keys(localStorage).filter(key => 
+                key.includes('weza') || key.includes('social') || key.includes('demo')
+            );
+            
+            keys.forEach(key => {
+                localStorage.removeItem(key);
+                addResult(`🗑️ Removed: ${key}`, 'result');
+            });
+            
+            addResult(`✅ Cleared localStorage. Now try:\\n1. Refresh WezaPost dashboard\\n2. Try connecting your Twitter account again\\n3. Check if it appears in post creator`, 'success');
+        }
+
+        // Auto-run initial checks
+        window.onload = () => {
+            addResult(`🚀 Starting account loading diagnostics...`, 'result');
+            setTimeout(checkSession, 500);
+            setTimeout(checkLocalStorage, 1000);
+        };
+    </script>
+</body>
+</html>

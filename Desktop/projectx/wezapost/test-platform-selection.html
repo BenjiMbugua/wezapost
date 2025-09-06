@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🎯 Test Platform Selection UI</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px; 
+            background: #f0f8ff; 
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .success-section {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .test-section {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .results-section {
+            background: #f1f5f9;
+            border: 2px solid #64748b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #2563eb; }
+        .success-btn { background: #22c55e; }
+        .success-btn:hover { background: #16a34a; }
+        .test-btn { background: #f59e0b; }
+        .test-btn:hover { background: #d97706; }
+        .post-preview {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .account-demo {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Test Enhanced Platform Selection</h1>
+        <p>Let's verify the enhanced UI for platform selection is working correctly!</p>
+
+        <div class="success-section">
+            <h3>✅ What We Fixed</h3>
+            <ul>
+                <li><strong>🔍 Larger, more distinct account buttons</strong></li>
+                <li><strong>🏷️ Clear REAL/DEMO badges</strong> for each account</li>
+                <li><strong>💙 Blue highlighting and checkmarks</strong> for selected accounts</li>
+                <li><strong>📋 Summary section</strong> showing exactly which accounts are selected</li>
+                <li><strong>📱 Better grid layout</strong> for multiple account display</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Test Scenarios</h3>
+            
+            <h4>Scenario 1: Demo Account Only</h4>
+            <div class="account-demo">
+                <strong>Expected:</strong> @demo_twitter_user with orange DEMO badge<br>
+                <strong>When selected:</strong> Blue highlighting, checkmark, summary shows "Selected for posting: @demo_twitter_user (DEMO)"
+            </div>
+
+            <h4>Scenario 2: Real Account Connected</h4>
+            <div class="account-demo">
+                <strong>Expected:</strong> @Wezalabstech with green REAL badge<br>
+                <strong>When selected:</strong> Blue highlighting, checkmark, summary shows "Selected for posting: @Wezalabstech (REAL)"
+            </div>
+
+            <h4>Scenario 3: Both Accounts Available</h4>
+            <div class="account-demo">
+                <strong>Expected:</strong> Two distinct buttons side by side<br>
+                <strong>Selection:</strong> Clear visual feedback showing which is selected<br>
+                <strong>Summary:</strong> Accurate reflection of selected account(s)
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Ready to Test</h3>
+            
+            <h4>📝 Post Content Ready:</h4>
+            <div class="post-preview" onclick="copyToClipboard('the age of resolve')">
+                the age of resolve
+                <br><small style="color: #666;">18/280 characters • Click to copy</small>
+            </div>
+
+            <h4>🎯 Test Steps:</h4>
+            <ol>
+                <li><strong>Open WezaPost Dashboard:</strong>
+                    <button onclick="window.open('http://localhost:3001/dashboard', '_blank')" class="success-btn">
+                        📱 Open Dashboard
+                    </button>
+                </li>
+                <li><strong>Navigate to Create Post section</strong></li>
+                <li><strong>Look for enhanced platform selection UI</strong></li>
+                <li><strong>Verify REAL/DEMO badges are visible</strong></li>
+                <li><strong>Click to select an account</strong> and watch for blue highlighting</li>
+                <li><strong>Check the summary section</strong> shows correct selection</li>
+                <li><strong>Paste "the age of resolve" content</strong></li>
+                <li><strong>Click "Publish Now"</strong> to test posting</li>
+            </ol>
+        </div>
+
+        <div class="results-section">
+            <h3>📊 What You Should See</h3>
+            
+            <h4>✅ Enhanced Platform Selection:</h4>
+            <ul>
+                <li>🔳 <strong>Larger buttons</strong> (min-width: 200px) for each account</li>
+                <li>🏷️ <strong>Color-coded badges:</strong> 
+                    <br>&nbsp;&nbsp;• Green "REAL" badge for @Wezalabstech
+                    <br>&nbsp;&nbsp;• Orange "DEMO" badge for demo accounts
+                </li>
+                <li>💙 <strong>Blue highlighting</strong> when account is selected</li>
+                <li>✔️ <strong>Checkmark icon</strong> in selected accounts</li>
+                <li>🔄 <strong>Smooth hover effects</strong> and transitions</li>
+            </ul>
+
+            <h4>📋 Summary Feedback:</h4>
+            <ul>
+                <li>⚠️ <strong>Warning message</strong> if no accounts selected</li>
+                <li>✅ <strong>Green confirmation</strong> showing selected accounts</li>
+                <li>🏷️ <strong>Account type indicators</strong> in summary (REAL/DEMO)</li>
+            </ul>
+
+            <h4>🎉 Expected Results:</h4>
+            <ul>
+                <li>📱 <strong>Clear visual distinction</strong> between account types</li>
+                <li>🎯 <strong>Obvious selection feedback</strong> when accounts are chosen</li>
+                <li>📋 <strong>Accurate summary</strong> of what will be posted where</li>
+                <li>✨ <strong>Professional, polished appearance</strong></li>
+            </ul>
+        </div>
+
+        <div class="success-section">
+            <h3>🎉 Ready for Real Posting!</h3>
+            <p>Once you verify the enhanced UI is working correctly, you can:</p>
+            
+            <ul>
+                <li>✅ <strong>Create your "the age of resolve" post</strong></li>
+                <li>✅ <strong>Select either DEMO or REAL account</strong> with clear visual feedback</li>
+                <li>✅ <strong>See exactly which account is selected</strong> in the summary</li>
+                <li>✅ <strong>Post with confidence</strong> knowing where it's going</li>
+            </ul>
+
+            <p>The enhanced UI makes it crystal clear which account is selected for posting!</p>
+        </div>
+
+        <div id="feedback" style="display: none; padding: 15px; margin: 15px 0; border-radius: 6px;"></div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showFeedback('✅ "' + text + '" copied to clipboard!', 'success');
+            });
+        }
+
+        function showFeedback(message, type) {
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.textContent = message;
+            feedback.className = type === 'success' ? 'success-section' : 'test-section';
+            
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 3000);
+        }
+
+        // Add some interactive elements
+        window.onload = function() {
+            console.log('🎯 Platform Selection Test Page Loaded');
+            console.log('✅ Ready to test enhanced UI features');
+        };
+    </script>
+</body>
+</html>

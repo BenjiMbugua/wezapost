@@ -3,25 +3,15 @@ import GoogleProvider from 'next-auth/providers/google'
 import TwitterProvider from 'next-auth/providers/twitter'
 import LinkedInProvider from 'next-auth/providers/linkedin'
 import FacebookProvider from 'next-auth/providers/facebook'
-import { SupabaseAdapter } from '@auth/supabase-adapter'
 import jwt from 'jsonwebtoken'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    db: {
-      schema: 'next_auth',
-    },
-  }
-)
 
 export const authOptions: NextAuthOptions = {
-  adapter: SupabaseAdapter({
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  }),
+  // Remove Supabase adapter temporarily to allow OAuth to work
+  // adapter: SupabaseAdapter({
+  //   url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  //   secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  // }),
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -70,14 +60,46 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.sub as string
+        // Get the Supabase UUID for this user based on email
+        try {
+          const { createClient } = await import('@supabase/supabase-js')
+          const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+          )
+
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', session.user.email)
+            .single()
+
+          if (profile) {
+            session.user.id = profile.id // Use the Supabase UUID
+          } else {
+            session.user.id = token.sub as string // Fallback to OAuth ID
+          }
+        } catch (error) {
+          console.error('Error getting user UUID from Supabase:', error)
+          session.user.id = token.sub as string // Fallback to OAuth ID
+        }
+        
         session.accessToken = token.accessToken as string
       }
       return session
     },
     async signIn({ user, account, profile }) {
-      // Create user profile in our profiles table if it doesn't exist
-      if (account && user.email) {
+      console.log('User signed in:', user.email, user.name)
+      
+      try {
+        // Create or update user profile in Supabase
+        const { createClient } = await import('@supabase/supabase-js')
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        )
+
+        // Check if user profile already exists using OAuth ID
         const { data: existingProfile } = await supabase
           .from('profiles')
           .select('id')
@@ -85,22 +107,37 @@ export const authOptions: NextAuthOptions = {
           .single()
 
         if (!existingProfile) {
-          await supabase
+          // Create new profile with UUID
+          const { data: newProfile, error } = await supabase
             .from('profiles')
-            .insert({
-              id: user.id,
-              email: user.email,
-              full_name: user.name,
-              avatar_url: user.image,
-              plan: 'free',
-              usage_limits: {
-                posts_per_month: 50,
-                social_accounts: 3,
-                ai_generations: 100,
-              },
-            })
+            .insert([
+              {
+                id: crypto.randomUUID(), // Generate a proper UUID
+                email: user.email!,
+                full_name: user.name,
+                avatar_url: user.image,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }
+            ])
+            .select('id')
+            .single()
+
+          if (error) {
+            console.error('Error creating user profile:', error)
+            // Still allow sign in even if profile creation fails
+          } else {
+            console.log('Created new user profile with UUID:', newProfile?.id)
+          }
+        } else {
+          console.log('User profile already exists with UUID:', existingProfile.id)
         }
+        
+      } catch (error) {
+        console.error('Error in signIn callback:', error)
+        // Don't block sign-in if profile creation fails
       }
+      
       return true
     },
   },
