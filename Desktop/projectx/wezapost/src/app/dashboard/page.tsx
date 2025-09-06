@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { SocialAccountsManager } from '@/components/features/social-accounts'
 import { EnhancedPostCreator } from '@/components/features/enhanced-post-creator'
@@ -268,114 +268,174 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 sm:px-8 py-8">
-        <div className="space-y-8">
+      <main className="max-w-7xl mx-auto px-6 sm:px-8 py-12">
+        <div className="space-y-12">
+          {/* Hero Section */}
+          <section className="text-center py-8">
+            <h1 className="text-4xl font-bold tracking-tight mb-4 animate-slide-up">
+              <span className="text-gradient-primary">Dashboard</span>
+            </h1>
+            <p className="text-lg text-muted-foreground font-mono max-w-2xl mx-auto animate-fade-in">
+              {isDemoMode 
+                ? 'Manage your social media presence in demo mode'
+                : 'Manage your social media presence across all platforms'
+              }
+            </p>
+          </section>
+
           {/* Welcome Section */}
-          <Card className="shadow-theme-md border-border/50 hover:shadow-theme-lg transition-all theme-transition animate-fade-in">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-2xl font-mono">
-                {isDemoMode ? 'Welcome to WezaPost Demo!' : 'Welcome Back!'}
-              </CardTitle>
-              <CardDescription className="font-mono">
-                {isDemoMode 
-                  ? 'Exploring WezaPost features in demo mode'
-                  : 'You&apos;re now signed in to WezaPost'
-                }
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-3 text-sm font-mono">
-                <div className="flex items-center space-x-2">
-                  <span className="text-muted-foreground">Email:</span> 
-                  <span className="text-foreground">{session?.user?.email || 'demo@wezapost.com'}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-muted-foreground">Name:</span> 
-                  <span className="text-foreground">{session?.user?.name || 'Demo User'}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-muted-foreground">Status:</span> 
-                  <span className={`px-2 py-1 rounded-full text-xs ${isDemoMode ? 'status-warning' : 'status-published'}`}>
-                    {isDemoMode ? 'Demo Mode' : 'Authenticated'}
-                  </span>
-                </div>
-              </div>
-              {isDemoMode && (
-                <div className="mt-6 p-4 glass-dark rounded-xl border border-border/30 animate-slide-up">
-                  <p className="text-sm text-info font-mono leading-relaxed">
-                    💡 This is a demo mode. To use real functionality, please sign in with OAuth providers configured in the .env.local file.
+          <Card className="glass border-border/30 shadow-theme-xl hover:shadow-theme-2xl transition-all theme-transition animate-scale-in">
+            <CardContent className="p-8">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold font-mono mb-2">
+                    {isDemoMode ? 'Welcome to WezaPost Demo!' : 'Welcome Back!'}
+                  </h2>
+                  <p className="text-muted-foreground font-mono">
+                    {isDemoMode 
+                      ? 'Exploring WezaPost features in demo mode'
+                      : 'You&apos;re ready to manage your social media'
+                    }
                   </p>
                 </div>
-              )}
+                <div className={`px-4 py-2 rounded-2xl text-sm font-mono ${isDemoMode ? 'status-warning' : 'status-published'}`}>
+                  {isDemoMode ? 'Demo Mode' : 'Authenticated'}
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold font-mono text-foreground">Account Details</h3>
+                  <div className="space-y-3 text-sm font-mono">
+                    <div className="flex items-center justify-between p-3 rounded-lg glass-dark">
+                      <span className="text-muted-foreground">Email</span> 
+                      <span className="text-foreground">{session?.user?.email || 'demo@wezapost.com'}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg glass-dark">
+                      <span className="text-muted-foreground">Name</span> 
+                      <span className="text-foreground">{session?.user?.name || 'Demo User'}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {isDemoMode && (
+                  <div className="glass-dark rounded-xl p-6 border border-border/20 animate-slide-up">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold font-mono mb-1 text-foreground">Demo Mode Active</h4>
+                        <p className="text-sm text-muted-foreground font-mono leading-relaxed">
+                          To use real functionality, sign in with OAuth providers configured in your environment.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
           {/* Social Accounts Management */}
-          <SocialAccountsManager />
+          <section className="animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-3 font-mono">Connected Accounts</h2>
+              <p className="text-muted-foreground font-mono">
+                Manage your social media accounts and connections
+              </p>
+            </div>
+            <SocialAccountsManager />
+          </section>
 
           {/* Enhanced Post Creator with Curated Posts */}
-          <EnhancedPostCreator />
+          <section className="animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-3 font-mono">Create & Schedule Posts</h2>
+              <p className="text-muted-foreground font-mono">
+                Compose posts and schedule them across all your platforms
+              </p>
+            </div>
+            <EnhancedPostCreator />
+          </section>
 
           {/* Calendar View */}
-          <CalendarView />
+          <section className="animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-3 font-mono">Content Calendar</h2>
+              <p className="text-muted-foreground font-mono">
+                Visualize your posting schedule across all platforms
+              </p>
+            </div>
+            <CalendarView />
+          </section>
 
           {/* Scheduler Dashboard */}
-          <SchedulerDashboard />
+          <section className="animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-3 font-mono">Automation & Scheduling</h2>
+              <p className="text-muted-foreground font-mono">
+                Monitor and control your automated posting system
+              </p>
+            </div>
+            <SchedulerDashboard />
+          </section>
 
-          {/* Quick Stats */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <RecentPosts limit={5} />
+          {/* Analytics & Insights */}
+          <section className="animate-fade-in">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl font-bold mb-3 font-mono">Analytics & Insights</h2>
+              <p className="text-muted-foreground font-mono">
+                Monitor your performance and track your growth across platforms
+              </p>
+            </div>
+            
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <RecentPosts limit={5} />
 
-            <Card className="shadow-theme-md border-border/50 hover:shadow-theme-lg transition-all animate-fade-in">
-              <CardHeader className="pb-4">
-                <CardTitle className="font-mono flex items-center space-x-2">
-                  <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span>Scheduled Posts</span>
-                </CardTitle>
-                <CardDescription className="font-mono">
-                  Posts waiting to be published
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-6">
-                  <div className="text-3xl font-bold text-muted-foreground font-mono mb-2">0</div>
-                  <div className="text-sm text-muted-foreground font-mono">
-                    No scheduled posts
+              <Card className="glass border-border/30 shadow-theme-lg hover:shadow-theme-xl transition-all group animate-scale-in">
+                <CardContent className="p-8">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                   </div>
-                  <div className="mt-3 px-3 py-1 rounded-full status-scheduled text-xs">
-                    Coming next!
+                  <h3 className="text-xl font-semibold mb-3 font-mono">Scheduled Posts</h3>
+                  <p className="text-muted-foreground font-mono text-sm mb-6 leading-relaxed">
+                    Posts queued for automatic publishing across your connected platforms
+                  </p>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-muted-foreground font-mono mb-2">0</div>
+                    <div className="px-3 py-1 rounded-full status-scheduled text-xs inline-block">
+                      Coming Soon!
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card className="shadow-theme-md border-border/50 hover:shadow-theme-lg transition-all animate-fade-in">
-              <CardHeader className="pb-4">
-                <CardTitle className="font-mono flex items-center space-x-2">
-                  <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  <span>Analytics</span>
-                </CardTitle>
-                <CardDescription className="font-mono">
-                  Performance insights
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-6">
-                  <div className="text-3xl font-bold text-muted-foreground font-mono mb-2">—</div>
-                  <div className="text-sm text-muted-foreground font-mono">
-                    Analytics coming soon
+              <Card className="glass border-border/30 shadow-theme-lg hover:shadow-theme-xl transition-all group animate-scale-in">
+                <CardContent className="p-8">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
                   </div>
-                  <div className="mt-3 px-3 py-1 rounded-full status-draft text-xs">
-                    Coming in Phase 5!
+                  <h3 className="text-xl font-semibold mb-3 font-mono">Performance Analytics</h3>
+                  <p className="text-muted-foreground font-mono text-sm mb-6 leading-relaxed">
+                    Track engagement, reach, and growth metrics across all platforms
+                  </p>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-muted-foreground font-mono mb-2">—</div>
+                    <div className="px-3 py-1 rounded-full status-draft text-xs inline-block">
+                      Phase 5
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
         </div>
       </main>
     </div>

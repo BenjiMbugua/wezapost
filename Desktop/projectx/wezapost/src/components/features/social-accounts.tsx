@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { SocialAccount, SocialProviderManager } from '@/lib/social-providers'
 import { SocialSetupWizard } from './social-setup-wizard'
 import { SocialCredentialManager } from '@/lib/social-credential-manager'
@@ -264,55 +263,68 @@ export function SocialAccountsManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Connected Accounts</CardTitle>
-          <CardDescription>
-            Manage your social media accounts for posting
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="space-y-8">
+      <Card className="glass border-border/30 shadow-theme-lg hover:shadow-theme-xl transition-all theme-transition">
+        <CardContent className="p-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-bold font-mono mb-2">Connected Accounts</h3>
+              <p className="text-muted-foreground font-mono text-sm">
+                Your active social media connections
+              </p>
+            </div>
+            <div className="px-3 py-1 rounded-full bg-gradient-secondary text-xs font-mono">
+              {accounts.length} Connected
+            </div>
+          </div>
+          
           {accounts.length === 0 ? (
-            <div className="text-center py-6">
-              <p className="text-sm text-muted-foreground font-mono">
+            <div className="text-center py-12">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-primary/20 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-2-4H9m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V9z" />
+                </svg>
+              </div>
+              <p className="text-muted-foreground font-mono">
                 No social accounts connected yet
               </p>
             </div>
           ) : (
-            <div className="grid gap-3">
+            <div className="grid gap-4">
               {accounts.map((account) => {
                 const platformInfo = socialManager.getPlatformInfo(account.platform)
                 return (
                   <div
                     key={account.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
+                    className="glass-dark rounded-xl p-4 border border-border/20 hover:border-border/40 transition-all group"
                   >
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${platformInfo.color}`}>
-                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                          <path d={platformInfo.icon} />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="font-medium font-mono">{account.display_name}</div>
-                        <div className="text-sm text-muted-foreground font-mono">
-                          @{account.username}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${platformInfo.color} group-hover:scale-110 transition-transform`}>
+                          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d={platformInfo.icon} />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="font-semibold font-mono text-foreground">{account.display_name}</div>
+                          <div className="text-sm text-muted-foreground font-mono">
+                            @{account.username}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={account.is_active ? 'default' : 'secondary'}>
-                        {account.is_active ? 'Active' : 'Inactive'}
-                      </Badge>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDisconnect(account.id)}
-                        className="text-xs"
-                      >
-                        Disconnect
-                      </Button>
+                      <div className="flex items-center space-x-3">
+                        <div className={`px-3 py-1 rounded-full text-xs font-mono ${account.is_active ? 'status-published' : 'status-draft'}`}>
+                          {account.is_active ? 'Active' : 'Inactive'}
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDisconnect(account.id)}
+                          className="text-xs font-mono focus-ring hover:shadow-theme-sm transition-all"
+                        >
+                          Disconnect
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 )
@@ -322,15 +334,16 @@ export function SocialAccountsManager() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Connect New Account</CardTitle>
-          <CardDescription>
-            Add more social media platforms to expand your reach
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <Card className="glass border-border/30 shadow-theme-lg hover:shadow-theme-xl transition-all theme-transition">
+        <CardContent className="p-8">
+          <div className="text-center mb-8">
+            <h3 className="text-xl font-bold font-mono mb-2">Connect New Platform</h3>
+            <p className="text-muted-foreground font-mono text-sm">
+              Expand your reach across more social media platforms
+            </p>
+          </div>
+          
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {availablePlatforms.map((platform) => {
               const platformInfo = socialManager.getPlatformInfo(platform)
               const isConnected = connectedPlatforms.has(platform)
@@ -342,33 +355,45 @@ export function SocialAccountsManager() {
                 <Button
                   key={platform}
                   variant={isConnected ? "secondary" : "outline"}
-                  className="h-auto p-4 flex flex-col items-center space-y-2 relative"
+                  className="h-auto p-6 flex flex-col items-center space-y-3 relative glass-dark hover:shadow-theme-md transition-all focus-ring group border-border/30"
                   onClick={() => !isConnected && handleConnect(platform)}
                   disabled={isConnected || isConnecting}
                 >
                   {hasOAuthConfigured && (
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white" 
-                         title="Real OAuth Available" />
+                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-gradient-primary rounded-full border-2 border-card flex items-center justify-center" 
+                         title="Real OAuth Available">
+                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                   )}
                   
                   {isConnecting ? (
-                    <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${platformInfo.color}`}>
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${platformInfo.color} group-hover:scale-110 transition-transform`}>
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                         <path d={platformInfo.icon} />
                       </svg>
                     </div>
                   )}
                   <div className="text-center">
-                    <div className="font-medium text-sm">
+                    <div className="font-semibold text-sm font-mono mb-1">
                       {isConnected ? 'Connected' : isConnecting ? 'Connecting...' : 'Connect'}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-muted-foreground font-mono">
                       {platformInfo.name}
-                      {hasOAuthConfigured && <div className="text-green-600">Real OAuth</div>}
-                      {supportsRealOAuth && !hasOAuthConfigured && <div className="text-orange-600">Demo Mode</div>}
                     </div>
+                    {hasOAuthConfigured && (
+                      <div className="mt-1 px-2 py-1 rounded-full status-published text-xs">
+                        Real OAuth
+                      </div>
+                    )}
+                    {supportsRealOAuth && !hasOAuthConfigured && (
+                      <div className="mt-1 px-2 py-1 rounded-full status-warning text-xs">
+                        Demo Mode
+                      </div>
+                    )}
                   </div>
                 </Button>
               )
