@@ -1,4 +1,5 @@
 import { createSupabaseClientComponentClient } from '@/lib/supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export interface SocialAccount {
   id: string
@@ -26,12 +27,33 @@ export interface ConnectAccountData {
 }
 
 export class SocialProviderManager {
-  private supabase = createSupabaseClientComponentClient()
+  private supabase: SupabaseClient
+  
+  constructor(customSupabaseClient?: SupabaseClient) {
+    this.supabase = customSupabaseClient || createSupabaseClientComponentClient()
+  }
 
   async connectAccount(userId: string, accountData: ConnectAccountData): Promise<SocialAccount | null> {
     try {
-      // For now, let's use a simple approach with localStorage until we fix the auth integration
-      // This ensures the app works while we resolve the database schema issues
+      console.log(`Connecting account for user: ${userId}`)
+      
+      // Convert non-UUID user ID to UUID format for database compatibility
+      let dbUserId = userId
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+      
+      if (!isUUID) {
+        // Create a consistent UUID from the user ID using the same method as auth callbacks
+        const crypto = await import('crypto')
+        const hash = crypto.createHash('sha1').update(`oauth-${userId}`).digest('hex')
+        dbUserId = [
+          hash.substring(0, 8),
+          hash.substring(8, 12),
+          hash.substring(12, 16),
+          hash.substring(16, 20),
+          hash.substring(20, 32)
+        ].join('-')
+        console.log(`Converted user ID ${userId} to UUID ${dbUserId} for database`)
+      }
       
       const newAccount: SocialAccount = {
         id: `real-${accountData.platform}-${accountData.platform_user_id}`,
@@ -47,7 +69,7 @@ export class SocialProviderManager {
         },
       }
 
-      // Add additional properties for localStorage storage
+      // Add additional properties for localStorage storage (use original userId for localStorage compatibility)
       const accountWithMeta = {
         ...newAccount,
         user_id: userId,
@@ -59,12 +81,13 @@ export class SocialProviderManager {
         updated_at: new Date().toISOString(),
       }
 
-      // Try to save to Supabase database first
+      // Try to save to Supabase database first (use dbUserId for database operations)
       try {
+        console.log('Attempting to save account to database...')
         const { data, error } = await this.supabase
           .from('social_accounts')
           .upsert({
-            user_id: userId,
+            user_id: dbUserId,
             platform: accountData.platform,
             platform_user_id: accountData.platform_user_id,
             username: accountData.username,
@@ -87,7 +110,7 @@ export class SocialProviderManager {
           .single()
 
         if (!error && data) {
-          console.log(`${accountData.platform} account saved to database for user ${userId}`)
+          console.log(`${accountData.platform} account saved to database for user ${userId} (UUID: ${dbUserId})`)
           return {
             id: data.id,
             platform: data.platform,
@@ -141,11 +164,29 @@ export class SocialProviderManager {
     try {
       console.log('Getting connected accounts for user:', userId)
       
+      // Convert non-UUID user ID to UUID format for database compatibility
+      let dbUserId = userId
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+      
+      if (!isUUID) {
+        // Create a consistent UUID from the user ID using the same method as auth callbacks
+        const crypto = await import('crypto')
+        const hash = crypto.createHash('sha1').update(`oauth-${userId}`).digest('hex')
+        dbUserId = [
+          hash.substring(0, 8),
+          hash.substring(8, 12),
+          hash.substring(12, 16),
+          hash.substring(16, 20),
+          hash.substring(20, 32)
+        ].join('-')
+        console.log(`Converted user ID ${userId} to UUID ${dbUserId} for database query`)
+      }
+      
       // Try to get accounts from Supabase database
       const { data: dbAccounts, error } = await this.supabase
         .from('social_accounts')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', dbUserId)
         .eq('is_active', true)
         .order('created_at', { ascending: false })
       
@@ -158,7 +199,7 @@ export class SocialProviderManager {
           const savedAccounts = localStorage.getItem('wezapost-demo-accounts')
           if (savedAccounts) {
             const allAccounts = JSON.parse(savedAccounts)
-            // Filter for accounts belonging to this user
+            // Filter for accounts belonging to this user (use original userId for localStorage)
             accounts = allAccounts.filter((acc: any) => 
               acc.user_id === userId && acc.real_oauth === true
             )
@@ -193,11 +234,29 @@ export class SocialProviderManager {
 
   async disconnectAccount(userId: string, accountId: string): Promise<boolean> {
     try {
+      // Convert non-UUID user ID to UUID format for database compatibility
+      let dbUserId = userId
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+      
+      if (!isUUID) {
+        // Create a consistent UUID from the user ID using the same method as auth callbacks
+        const crypto = await import('crypto')
+        const hash = crypto.createHash('sha1').update(`oauth-${userId}`).digest('hex')
+        dbUserId = [
+          hash.substring(0, 8),
+          hash.substring(8, 12),
+          hash.substring(12, 16),
+          hash.substring(16, 20),
+          hash.substring(20, 32)
+        ].join('-')
+        console.log(`Converted user ID ${userId} to UUID ${dbUserId} for disconnect operation`)
+      }
+
       const { error } = await this.supabase
         .from('social_accounts')
         .update({ is_active: false })
         .eq('id', accountId)
-        .eq('user_id', userId)
+        .eq('user_id', dbUserId)
 
       if (error) {
         console.error('Error disconnecting account:', error)
@@ -217,11 +276,29 @@ export class SocialProviderManager {
     settings: Partial<SocialAccount['settings']>
   ): Promise<boolean> {
     try {
+      // Convert non-UUID user ID to UUID format for database compatibility
+      let dbUserId = userId
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+      
+      if (!isUUID) {
+        // Create a consistent UUID from the user ID using the same method as auth callbacks
+        const crypto = await import('crypto')
+        const hash = crypto.createHash('sha1').update(`oauth-${userId}`).digest('hex')
+        dbUserId = [
+          hash.substring(0, 8),
+          hash.substring(8, 12),
+          hash.substring(12, 16),
+          hash.substring(16, 20),
+          hash.substring(20, 32)
+        ].join('-')
+        console.log(`Converted user ID ${userId} to UUID ${dbUserId} for settings update`)
+      }
+
       const { error } = await this.supabase
         .from('social_accounts')
         .update({ settings })
         .eq('id', accountId)
-        .eq('user_id', userId)
+        .eq('user_id', dbUserId)
 
       if (error) {
         console.error('Error updating account settings:', error)
