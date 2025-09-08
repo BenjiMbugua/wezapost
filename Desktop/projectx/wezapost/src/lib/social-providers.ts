@@ -13,6 +13,14 @@ export interface SocialAccount {
     default_visibility: string
     custom_hashtags: string[]
   }
+  // Optional fields for compatibility with localStorage and database records
+  real_oauth?: boolean
+  user_id?: string
+  access_token?: string
+  refresh_token?: string
+  expires_at?: string
+  created_at?: string
+  updated_at?: string
 }
 
 export interface ConnectAccountData {
@@ -190,6 +198,13 @@ export class SocialProviderManager {
         .eq('is_active', true)
         .order('created_at', { ascending: false })
       
+      console.log('📊 Database query result:', {
+        dbUserId,
+        accountsFound: dbAccounts?.length || 0,
+        error: error?.message,
+        accounts: dbAccounts?.map(acc => ({ platform: acc.platform, username: acc.username }))
+      })
+      
       if (error) {
         console.log('Database error, falling back to localStorage:', error.message)
         
@@ -220,7 +235,15 @@ export class SocialProviderManager {
           auto_post: true,
           default_visibility: 'public',
           custom_hashtags: []
-        }
+        },
+        // Add indicators for real OAuth accounts from database
+        real_oauth: true,
+        user_id: userId, // Use original userId for localStorage compatibility
+        access_token: account.access_token,
+        refresh_token: account.refresh_token,
+        expires_at: account.expires_at,
+        created_at: account.created_at,
+        updated_at: account.updated_at
       }))
       
       console.log(`Found ${accounts.length} connected accounts in database`)
